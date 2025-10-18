@@ -33,11 +33,23 @@
     .brand{display:flex;align-items:center;gap:12px}
     .brand img{height:36px;width:auto;border-radius:6px}
     .brand h1{font-size:16px;margin:0;font-weight:700;letter-spacing:.2px}
-    .filters{display:flex;flex-wrap:wrap;gap:8px}
+    .filters{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
+    .filter-section{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .tag-toggle{
+      display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:1px solid var(--border);border-radius:999px;
+      background:var(--spd-red);color:#fff;cursor:pointer;font-size:14px;font-weight:700;user-select:none;
+      transition:all .2s ease;
+    }
+    .tag-toggle:hover{background:color-mix(in oklab, var(--spd-red) 85%, black)}
+    .tag-toggle::after{content:"▼";font-size:10px;transition:transform .2s}
+    .tag-toggle.expanded::after{transform:rotate(180deg)}
+    .tag-filters{display:none;flex-wrap:wrap;gap:8px;margin-top:8px;width:100%}
+    .tag-filters.visible{display:flex}
     .chip{
       display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer;font-size:14px;
-      user-select:none;
+      user-select:none;transition:all .2s ease;
     }
+    .chip:hover{border-color:var(--spd-red);background:color-mix(in oklab, var(--spd-red) 5%, white)}
     .chip input{accent-color:var(--spd-red)}
     .chip.active{border-color:var(--spd-red);box-shadow:0 0 0 3px color-mix(in oklab, var(--spd-red) 25%, transparent)}
     main{margin:0 auto;max-width:var(--maxw);padding:20px}
@@ -121,7 +133,13 @@
       <input id="q" type="search" placeholder="Suche nach Personen, Projekten, Stichworten …" aria-label="Suche" />
       <button id="clear">Löschen</button>
     </div>
-    <p class="legend">Scrolle von oben nach unten. Tippe auf eine Karte, um Details zu öffnen. Nutze Filter & Suche, um Ereignisse schneller zu finden.</p>
+    <p class="legend">
+      Dieser interaktive Zeitstrahl dokumentiert die Geschichte Langenselbolds mit besonderem Fokus auf die Entwicklung und die Errungenschaften der SPD seit 1887.
+      Scrollen Sie chronologisch von oben nach unten durch über ein Jahrhundert lokaler Politik und Stadtentwicklung.
+      Klicken Sie auf eine Ereigniskarte, um ausführliche Details, Hintergründe und Quellennachweise zu sehen.
+      Nutzen Sie die Typfilter (Ereignis, Person, Projekt), um gezielt nach Kategorien zu suchen, oder öffnen Sie die Tagfilter für eine thematische Navigation.
+      Die Suchfunktion durchsucht alle Inhalte in Echtzeit – ideal, um bestimmte Personen, Orte oder Themen schnell zu finden.
+    </p>
 
     <section class="timeline" id="timeline" aria-label="Zeitstrahl"></section>
   </main>
@@ -146,8 +164,8 @@
         date:"1887",
         title:"Arbeiterverein in Langenselbold",
         type:"Ereignis",
-        excerpt:"In Langenselbold entsteht ein Arbeiterverein – Keimzelle organisierter Interessenvertretung.",
-        body:"Die frühe Arbeiterorganisation legt den Grundstein für sozialdemokratische Strukturen vor Ort.",
+        excerpt:"In Langenselbold entsteht ein Arbeiterverein – Keimzelle organisierter Interessenvertretung der arbeitenden Bevölkerung.",
+        body:"Der Arbeiterverein von 1887 markiert den Beginn organisierter Interessenvertretung in Langenselbold. In einer Zeit, in der Arbeiter rechtlich und sozial noch kaum geschützt waren, bildeten solche Vereine die ersten Anlaufstellen für gegenseitige Unterstützung, Bildung und politische Willensbildung. Diese frühe Arbeiterorganisation legte den Grundstein für die späteren sozialdemokratischen Strukturen vor Ort und war Teil der breiteren Arbeiterbewegung, die sich gegen Ende des 19. Jahrhunderts in ganz Deutschland formierte.",
         tags:["Arbeiterbewegung","Vorläufer"],
         source:["Chronik, 1887"],
       },
@@ -157,8 +175,8 @@
         date:"1890",
         title:"Gründung des sozialdemokratischen Wahlvereins",
         type:"Ereignis",
-        excerpt:"Der Hanauer Abgeordnete Frohme spricht aus dem Fenster des Brauhauses zu ~200 Wahlberechtigten.",
-        body:"Die anfänglichen Mitglieder sind überwiegend Bauarbeiter. Versammlungen im Isenburger Hof gelten als mutig – die Polizei beobachtet Gastwirte, die den „Roten“ Räume geben.",
+        excerpt:"Der Hanauer Reichstagsabgeordnete Karl Frohme spricht vom Fenster des Brauhauses zu etwa 200 Wahlberechtigten – die Geburtsstunde der organisierten Sozialdemokratie in Langenselbold.",
+        body:"1890 markiert die offizielle Gründung des sozialdemokratischen Wahlvereins in Langenselbold. Der Hanauer Reichstagsabgeordnete Karl Frohme hält eine bemerkenswerte Rede aus dem Fenster des Brauhauses heraus, da größere Versammlungsräume politisch riskant waren. Rund 200 Wahlberechtigte versammeln sich – ein beachtlicher Zulauf in einer Zeit, in der Sozialdemokraten noch als ‚Reichsfeinde' galten. Die anfänglichen Mitglieder stammen überwiegend aus der Bauarbeiterschaft. Treffen finden im Isenburger Hof statt, was damals politischen Mut erforderte: Die Polizei observierte Gastwirte, die den ‚Roten' Räume zur Verfügung stellten. Trotz dieser Repression wächst der Verein stetig.",
         tags:["Gründung","Frohme","Brauhaus","Isenburger Hof"],
         source:["Chronik, 1890"], link:null
       },
@@ -166,10 +184,10 @@
         id:"e1898-hosse",
         year:1898,
         date:"1898",
-        title:"Zigarrenfabrik Hosse – Zweigstelle im ‚Fruchtbau‘",
+        title:"Zigarrenfabrik Hosse – Zweigstelle im ‚Fruchtbau'",
         type:"Ereignis",
-        excerpt:"Industrialisierung vor Ort; zugleich politischer Rückenwind für die SPD.",
-        body:"Parallel prägt Gustav Hoch (Hanau) die Region mit Vorträgen und gewinnt neue Wähler.",
+        excerpt:"Die Eröffnung einer Zigarrenfabrik-Zweigstelle bringt Industriearbeitsplätze nach Langenselbold und stärkt gleichzeitig die sozialdemokratische Bewegung.",
+        body:"Mit der Einrichtung einer Zweigstelle der Zigarrenfabrik Hosse im historischen ‚Fruchtbau' hält die Industrialisierung Einzug in Langenselbold. Die neuen Fabrikarbeitsplätze verändern die soziale Struktur des Ortes nachhaltig und schaffen eine breitere Basis für gewerkschaftliche und politische Organisation. Industriearbeiter waren traditionell empfänglicher für sozialdemokratische Ideen als die bäuerliche Bevölkerung. Parallel nutzt Gustav Hoch aus Hanau, ein überregional bekannter Sozialdemokrat, seine Vortragsreisen, um in der Region für die Partei zu werben. Seine Reden finden großen Anklang und tragen dazu bei, dass die SPD in Langenselbold weiter an Boden gewinnt.",
         tags:["Wirtschaft","Fruchtbau","Gustav Hoch"],
         source:["Chronik, 1898"]
       },
@@ -212,8 +230,8 @@
         date:"1933",
         title:"Verbot des Ortsvereins durch die Nazis",
         type:"Ereignis",
-        excerpt:"Der SPD-Ortsverein wird aufgelöst; Jean Mahr erhält 15 Monate Gefängnis.",
-        body:"Parallel erwirbt die Gemeinde den ‚Fruchtbau‘; Repression und Verfolgung prägen das Ortsgeschehen.",
+        excerpt:"Die Nationalsozialisten verbieten den SPD-Ortsverein. Jean Mahr, ein führender Sozialdemokrat, wird zu 15 Monaten Gefängnis verurteilt.",
+        body:"Mit der Machtübernahme der Nationalsozialisten 1933 endet die demokratische Ära abrupt. Der SPD-Ortsverein wird zwangsaufgelöst, politische Gegner werden systematisch verfolgt. Jean Mahr, eine zentrale Figur der lokalen Sozialdemokratie, erhält eine Gefängnisstrafe von 15 Monaten – ein typisches Schicksal für aktive Sozialdemokraten in dieser Zeit. Viele Genossen ziehen sich zurück, gehen in die innere Emigration oder werden inhaftiert. Parallel dazu erwirbt die nun gleichgeschaltete Gemeinde den historischen ‚Fruchtbau', der zuvor ein Ort industrieller Arbeit und sozialdemokratischer Organisation gewesen war. Die Jahre bis 1945 sind geprägt von Repression, Überwachung und der Zerschlagung aller demokratischen Strukturen.",
         tags:["NS-Zeit","Repression","Fruchtbau","Jean Mahr"],
         source:["Chronik, 1933"]
       },
@@ -223,8 +241,8 @@
         date:"25. April 1945",
         title:"Jean Mahr wird kommissarischer Bürgermeister",
         type:"Person",
-        excerpt:"Pflasterer, Gewerkschafter, Sozialdemokrat – und Brückenbauer ins demokratische Nachkriegs-Selbold.",
-        body:"Nach Kriegsende zieht die SPD mit sechs von 18 Mandaten (1946) in die neue Gemeindevertretung ein.",
+        excerpt:"Am Tag nach der Befreiung wird der Pflasterer, Gewerkschafter und Sozialdemokrat Jean Mahr kommissarischer Bürgermeister – Symbol des demokratischen Neubeginns.",
+        body:"Am 25. April 1945, unmittelbar nach dem Einmarsch amerikanischer Truppen und der Befreiung vom NS-Regime, wird Jean Mahr zum kommissarischen Bürgermeister ernannt. Seine Ernennung ist kein Zufall: Als verfolgter Sozialdemokrat, der Gefängnis und Repression erlebt hatte, steht er für demokratische Kontinuität und moralische Integrität. Der gelernte Pflasterer und engagierte Gewerkschafter baut Brücken zwischen den verschiedenen politischen Lagern und hilft, Langenselbold in die Nachkriegsordnung zu überführen. Bei den ersten demokratischen Kommunalwahlen 1946 gewinnt die SPD sechs von 18 Mandaten – ein respektables Ergebnis angesichts der schwierigen Ausgangslage. Jean Mahr verkörpert die Verbindung zwischen dem Widerstand gegen den Nationalsozialismus und dem demokratischen Aufbau nach 1945.",
         tags:["Jean Mahr","Neubeginn"],
         source:["Chronik, 1945/1946"]
       },
@@ -234,8 +252,8 @@
         date:"späte 1940er",
         title:"Erste 45 gemeindeeigene Wohnungen",
         type:"Projekt",
-        excerpt:"Antwort auf akute Wohnungsnot trotz knapper Kassen.",
-        body:"Kommunaler Wohnungsbau prägt das soziale Profil der Stadt – ein SPD-Markenzeichen bis heute.",
+        excerpt:"Trotz extrem knapper kommunaler Kassen investiert die Gemeinde in bezahlbaren Wohnraum – eine entschiedene Antwort auf die akute Wohnungsnot der Nachkriegszeit.",
+        body:"Die späten 1940er Jahre sind geprägt von verheerenden Wohnungsengpässen. Flüchtlinge, Vertriebene und Rückkehrer aus dem Krieg suchen verzweifelt nach Unterkünften. In dieser Situation entscheidet sich die von der SPD mitgeprägte Gemeindeverwaltung für einen mutigen Schritt: Trotz äußerst knapper kommunaler Kassen wird in den Bau von 45 gemeindeeigenen Wohnungen investiert. Dieses frühe Engagement im kommunalen Wohnungsbau wird zum Markenzeichen sozialdemokratischer Politik in Langenselbold. Es geht nicht nur um Dächer über dem Kopf, sondern um menschenwürdiges Wohnen, soziale Stabilität und den Zusammenhalt der Gemeinschaft. Die Entscheidung legt den Grundstein für eine jahrzehntelange Tradition des sozialen Wohnungsbaus, die das Profil der Stadt bis heute prägt.",
         tags:["Wohnen","Sozialpolitik"],
         source:["Chronik, 1946ff."]
       },
@@ -300,8 +318,8 @@
         date:"1975/1976",
         title:"Beschluss & Ankauf des Schlossareals",
         type:"Projekt",
-        excerpt:"Heftig umstritten – später hochgelobt.",
-        body:"Jugendliche (darunter viele Jusos) bauen mit der Gemeinde ein starkes Jugendzentrum auf. Gleichzeitig entstehen in den 1970ern Spiel- & Bolzplätze im ganzen Ort.",
+        excerpt:"Eine der umstrittensten politischen Entscheidungen der Stadtgeschichte – heute wird der Schlossankauf als weitblickende kulturpolitische Weichenstellung gewürdigt.",
+        body:"Der Ankauf des Schlossareals 1975/76 löst heftige Debatten aus. Kritiker halten die Investition für unverantwortlich, Befürworter sehen darin eine historische Chance zur Schaffung eines kulturellen und sozialen Zentrums. Die SPD setzt sich für den Kauf ein und behält Recht: Das Schloss entwickelt sich zum Herzstück des kulturellen und jugendpolitischen Lebens in Langenselbold. Engagierte Jugendliche – darunter viele Mitglieder der Jungsozialisten (Jusos) – packen mit an und bauen gemeinsam mit der Gemeinde ein lebendiges Jugendzentrum auf, das Generationen prägt. Parallel dazu investiert die Stadt in den 1970er Jahren systematisch in Spiel- und Bolzplätze im gesamten Stadtgebiet. Diese Infrastruktur für Kinder und Jugendliche zeigt das sozialdemokratische Verständnis von Daseinsvorsorge: Nicht nur Straßen und Kanäle, sondern auch Orte der Begegnung, des Spiels und der Kultur gehören zur lebenswerten Stadt.",
         tags:["Schloss","Jugendzentrum","Jusos","Spielplätze"],
         source:["Chronik, 1975/1976/1970er"]
       },
@@ -344,8 +362,8 @@
         date:"1985",
         title:"Absolute Mehrheit für die SPD",
         type:"Ereignis",
-        excerpt:"Politische Dominanz – aber auch Debattenkultur (Friedenspolitik u. a.).",
-        body:"Die SPD prägt Sozial-, Kultur- und Umweltpolitik der Stadt in dieser Phase nachhaltig.",
+        excerpt:"Bei den Kommunalwahlen erreicht die SPD die absolute Mehrheit – Höhepunkt jahrzehntelanger politischer Arbeit und zugleich Auftrag zur konstruktiven Debatte.",
+        body:"1985 erringt die SPD bei den Kommunalwahlen die absolute Mehrheit in der Stadtverordnetenversammlung – ein historischer Erfolg und Vertrauensbeweis der Bürgerschaft. Doch mit der Dominanz wächst auch die Verantwortung: Innerhalb der Partei werden kontroverse Themen wie Friedenspolitik, Umweltschutz und Stadtentwicklung intensiv diskutiert. Die SPD nutzt ihre starke Position, um die Sozial-, Kultur- und Umweltpolitik der Stadt nachhaltig zu prägen. Projekte im Bereich Jugendarbeit, Infrastruktur und sozialer Wohnungsbau werden vorangetrieben. Gleichzeitig wird Wert auf eine lebendige Debattenkultur gelegt – auch innerparteilich gibt es unterschiedliche Positionen, etwa zur Nachrüstungsdebatte oder zu ökologischen Fragen. Diese Phase zeigt, dass politische Mehrheit nicht Meinungsmonopol bedeutet, sondern Gestaltungskraft und Verantwortung.",
         tags:["Kommunalwahl","Mehrheit"],
         source:["Chronik, 1985"]
       },
@@ -355,8 +373,8 @@
         date:"1990",
         title:"100 Jahre SPD Langenselbold",
         type:"Ereignis",
-        excerpt:"206 Mitglieder feiern ein Jahrhundert Engagement vor Ort.",
-        body:"Zeitzeugnisse und Chroniken konsolidieren das kollektive Gedächtnis.",
+        excerpt:"206 Mitglieder feiern ein Jahrhundert sozialdemokratisches Engagement in Langenselbold – von der verfolgten Arbeiterpartei zur kommunalpolitischen Gestaltungskraft.",
+        body:"1990 feiert die SPD Langenselbold ihr 100-jähriges Bestehen. 206 Mitglieder blicken auf ein bewegtes Jahrhundert zurück: Von den mutigen Gründungsjahren im Kaiserreich, über die Verfolgung in der NS-Zeit, den demokratischen Neubeginn nach 1945 bis hin zu den großen kommunalpolitischen Projekten der Nachkriegsjahrzehnte. Das Jubiläum ist mehr als ein Festakt – es ist ein Moment der Erinnerung und Selbstvergewisserung. Zeitzeugnisse werden gesammelt, Chroniken erstellt, Gespräche mit älteren Genossen geführt. Dieses kollektive Gedächtnis bewahrt nicht nur Namen und Daten, sondern auch die Werte, für die Generationen von Sozialdemokraten eingetreten sind: Solidarität, Gerechtigkeit, demokratische Teilhabe und soziale Verantwortung. Die Geschichte der SPD ist untrennbar mit der Entwicklung Langenselbolds zur modernen, sozialen Stadt verbunden.",
         tags:["Jubiläum","Mitglieder"],
         source:["Chronik, 1990"]
       }
@@ -410,10 +428,33 @@
     }
 
     function buildFilters(){
-      // Typen
-      TYPES.forEach(t => filtersEl.appendChild(chip(t,"type",true)));
-      // Tags: optional, starten aus
-      ALL_TAGS.forEach(t => filtersEl.appendChild(chip(t,"tag",false)));
+      // Typ-Filter Sektion
+      const typeSection = document.createElement("div");
+      typeSection.className = "filter-section";
+      TYPES.forEach(t => typeSection.appendChild(chip(t,"type",true)));
+      filtersEl.appendChild(typeSection);
+
+      // Tag-Toggle Button
+      const tagToggle = document.createElement("button");
+      tagToggle.className = "tag-toggle";
+      tagToggle.textContent = "Themen-Tags";
+      tagToggle.setAttribute("aria-expanded", "false");
+
+      // Tag-Filter Container (standardmäßig versteckt)
+      const tagContainer = document.createElement("div");
+      tagContainer.className = "tag-filters";
+      tagContainer.id = "tag-filters";
+      ALL_TAGS.forEach(t => tagContainer.appendChild(chip(t,"tag",false)));
+
+      // Toggle-Funktionalität
+      tagToggle.addEventListener("click", () => {
+        const isExpanded = tagContainer.classList.toggle("visible");
+        tagToggle.classList.toggle("expanded", isExpanded);
+        tagToggle.setAttribute("aria-expanded", isExpanded);
+      });
+
+      filtersEl.appendChild(tagToggle);
+      filtersEl.appendChild(tagContainer);
     }
 
     function groupByYear(items){
