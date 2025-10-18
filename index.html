@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SPD Langenselbold – Interaktiver Zeitstrahl</title>
+  <meta name="description" content="Interaktiver, vertikaler Zeitstrahl zur Geschichte Langenselbolds mit Schwerpunkt SPD Langenselbold." />
+  <style>
+    :root{
+      --spd-red:#E3000F; /* SPD-Rot */
+      --ink:#111;        /* Textfarbe */
+      --bg:#fbfbfb;      /* Seitenhintergrund */
+      --muted:#6b7280;   /* Sekundärtext */
+      --card:#ffffff;    /* Kartenfläche */
+      --border:#e5e7eb;  /* zarte Linien */
+      --radius:18px;     /* Rundungen */
+      --shadow:0 10px 28px rgba(0,0,0,.08);
+      --maxw:900px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif}
+    a{color:var(--spd-red);text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{
+      position:sticky;top:0;z-index:10;
+      backdrop-filter:saturate(1.1) blur(8px);
+      background:color-mix(in oklab, white 70%, transparent);
+      border-bottom:1px solid var(--border);
+    }
+    .bar{
+      margin:0 auto;max-width:var(--maxw);padding:14px 20px;display:flex;gap:14px;align-items:center;justify-content:space-between;
+    }
+    .brand{display:flex;align-items:center;gap:12px}
+    .brand img{height:36px;width:auto;border-radius:6px}
+    .brand h1{font-size:16px;margin:0;font-weight:700;letter-spacing:.2px}
+    .filters{display:flex;flex-wrap:wrap;gap:8px}
+    .chip{
+      display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer;font-size:14px;
+      user-select:none;
+    }
+    .chip input{accent-color:var(--spd-red)}
+    .chip.active{border-color:var(--spd-red);box-shadow:0 0 0 3px color-mix(in oklab, var(--spd-red) 25%, transparent)}
+    main{margin:0 auto;max-width:var(--maxw);padding:20px}
+    .legend{margin:18px 0;color:var(--muted);font-size:14px}
+    .timeline{
+      position:relative;margin:10px 0 80px 0;padding-left:26px;
+    }
+    /* vertikale Linie */
+    .timeline::before{
+      content:"";position:absolute;left:10px;top:0;bottom:0;width:2px;background:linear-gradient(var(--spd-red), var(--spd-red));
+      box-shadow:0 0 0 4px color-mix(in oklab, var(--spd-red) 18%, transparent);
+      border-radius:2px;
+    }
+    .year-block{
+      margin:22px 0 0 0;
+    }
+    .year-label{
+      position:relative;left:-26px;margin:0;color:#333;font-weight:800;letter-spacing:.3px;
+      background:linear-gradient(90deg, var(--spd-red), color-mix(in oklab, var(--spd-red) 30%, white));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      font-size:22px;
+    }
+    .item{
+      position:relative;margin:12px 0 0 0;padding:0 0 0 0;
+    }
+    .node{
+      position:absolute;left:-2px;top:10px;transform:translateX(-50%);
+      height:12px;width:12px;border:2px solid white;background:var(--spd-red);border-radius:999px;box-shadow:0 0 0 2px var(--spd-red), 0 0 0 6px color-mix(in oklab, var(--spd-red) 20%, transparent);
+    }
+    details.card{
+      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    summary{
+      list-style:none;cursor:pointer;display:flex;align-items:flex-start;gap:12px;padding:16px 18px;
+    }
+    summary::-webkit-details-marker{display:none}
+    .tag{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:4px 8px;border-radius:999px;background:#f5f5f5;border:1px solid var(--border);color:#444}
+    .title{font-size:18px;font-weight:700;margin:0}
+    .subtitle{margin:2px 0 0 0;color:var(--muted);font-size:14px}
+    .content{padding:0 18px 16px 18px;color:#2a2a2a}
+    .meta{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0 0 0}
+    .meta .pill{font-size:12px;color:#555;padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:#fff}
+    .searchbar{
+      width:100%;margin:12px 0 0 0;display:flex;gap:8px
+    }
+    .searchbar input{
+      flex:1;border:1px solid var(--border);border-radius:999px;padding:10px 14px;background:#fff;
+      outline:none;box-shadow:inset 0 1px 0 rgba(0,0,0,.03)
+    }
+    .searchbar button{
+      border:none;border-radius:999px;padding:10px 14px;background:var(--spd-red);color:#fff;font-weight:700;cursor:pointer
+    }
+    footer{
+      margin:60px auto 40px;max-width:var(--maxw);color:var(--muted);font-size:13px;padding:0 20px
+    }
+    /* kleine Feinheiten mobil */
+    @media (max-width:700px){
+      .brand h1{display:none}
+      .year-label{font-size:19px}
+      .title{font-size:17px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="bar">
+      <div class="brand">
+        <!-- HINWEIS: Ersetze src durch deinen GitHub-Pfad, z.B. /assets/logo.png -->
+        <img src="assets/logo.png" alt="SPD Langenselbold Logo" />
+        <h1>Geschichte von Langenselbold – Fokus SPD</h1>
+      </div>
+      <div class="filters" id="filters">
+        <!-- Filterchips werden via JS befüllt -->
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="searchbar">
+      <input id="q" type="search" placeholder="Suche nach Personen, Projekten, Stichworten …" aria-label="Suche" />
+      <button id="clear">Löschen</button>
+    </div>
+    <p class="legend">Scrolle von oben nach unten. Tippe auf eine Karte, um Details zu öffnen. Nutze Filter & Suche, um Ereignisse schneller zu finden.</p>
+
+    <section class="timeline" id="timeline" aria-label="Zeitstrahl"></section>
+  </main>
+
+  <footer>
+    <p>
+      Quellen (Auszug): Chronik SPD Langenselbold; Festschriften 70/90/100 Jahre; Quiznotizen. 
+      Siehe Datenobjekt „source“ je Ereignis für Kurzverweis.
+    </p>
+    <p>Design: SPD-Rot, klare Typo, barrierearme Kontraste. Prototyp, offen erweiterbar.</p>
+  </footer>
+
+  <script>
+    // --- Daten: Ereignisse (Auszug; kann beliebig erweitert werden) ---
+    // Felder:
+    // id, year, date, title, type: ("Ereignis"|"Person"|"Projekt"),
+    // excerpt, body, tags:[…], source:[kurze Verweise], link(optional)
+    const EVENTS = [
+      {
+        id:"e1887-av",
+        year:1887,
+        date:"1887",
+        title:"Arbeiterverein in Langenselbold",
+        type:"Ereignis",
+        excerpt:"In Langenselbold entsteht ein Arbeiterverein – Keimzelle organisierter Interessenvertretung.",
+        body:"Die frühe Arbeiterorganisation legt den Grundstein für sozialdemokratische Strukturen vor Ort.",
+        tags:["Arbeiterbewegung","Vorläufer"],
+        source:["Chronik, 1887"],
+      },
+      {
+        id:"e1890-gruendung",
+        year:1890,
+        date:"1890",
+        title:"Gründung des sozialdemokratischen Wahlvereins",
+        type:"Ereignis",
+        excerpt:"Der Hanauer Abgeordnete Frohme spricht aus dem Fenster des Brauhauses zu ~200 Wahlberechtigten.",
+        body:"Die anfänglichen Mitglieder sind überwiegend Bauarbeiter. Versammlungen im Isenburger Hof gelten als mutig – die Polizei beobachtet Gastwirte, die den „Roten“ Räume geben.",
+        tags:["Gründung","Frohme","Brauhaus","Isenburger Hof"],
+        source:["Chronik, 1890"], link:null
+      },
+      {
+        id:"e1898-hosse",
+        year:1898,
+        date:"1898",
+        title:"Zigarrenfabrik Hosse – Zweigstelle im ‚Fruchtbau‘",
+        type:"Ereignis",
+        excerpt:"Industrialisierung vor Ort; zugleich politischer Rückenwind für die SPD.",
+        body:"Parallel prägt Gustav Hoch (Hanau) die Region mit Vorträgen und gewinnt neue Wähler.",
+        tags:["Wirtschaft","Fruchtbau","Gustav Hoch"],
+        source:["Chronik, 1898"]
+      },
+      {
+        id:"e1914-lazarett",
+        year:1914,
+        date:"1914",
+        title:"Vereinslazarett im Schloss",
+        type:"Projekt",
+        excerpt:"Am 12. Oktober treffen die ersten 25 Verwundeten ein.",
+        body:"Das Schloss dient im Ersten Weltkrieg als Lazarett – ein drastischer Einschnitt ins lokale Leben.",
+        tags:["Schloss","Erster Weltkrieg","Gesundheit"],
+        source:["Chronik, 1914"]
+      },
+      {
+        id:"e1918-19-wechsel",
+        year:1918,
+        date:"1918–1919",
+        title:"USPD/KPD-Wechsel vieler Mitglieder",
+        type:"Ereignis",
+        excerpt:"Nach 1918 wechselt eine Mehrheit lokal zur USPD und 1919 zur KPD; nur wenige Sozialdemokraten bleiben.",
+        body:"Trotz Abwanderung führen u. a. Müller, Raab, Hedderich, Häfner, Bendorf, Mahr und die beiden Wilhelm Betz die Parteiarbeit fort.",
+        tags:["Parteigeschichte","USPD","KPD"],
+        source:["Chronik, 1918/1919"]
+      },
+      {
+        id:"e1929-mandate",
+        year:1929,
+        date:"1929",
+        title:"SPD gewinnt zwei Sitze in der Gemeindevertretung",
+        type:"Ereignis",
+        excerpt:"Rückkehr in die kommunale Verantwortung.",
+        body:"Unter Jean Müller gelingt der SPD nach den Verlusten der frühen 1920er die erneute Verankerung.",
+        tags:["Kommunalwahl"],
+        source:["Chronik, 1929"]
+      },
+      {
+        id:"e1933-verbot",
+        year:1933,
+        date:"1933",
+        title:"Verbot des Ortsvereins durch die Nazis",
+        type:"Ereignis",
+        excerpt:"Der SPD-Ortsverein wird aufgelöst; Jean Mahr erhält 15 Monate Gefängnis.",
+        body:"Parallel erwirbt die Gemeinde den ‚Fruchtbau‘; Repression und Verfolgung prägen das Ortsgeschehen.",
+        tags:["NS-Zeit","Repression","Fruchtbau","Jean Mahr"],
+        source:["Chronik, 1933"]
+      },
+      {
+        id:"e1945-mahr",
+        year:1945,
+        date:"25. April 1945",
+        title:"Jean Mahr wird kommissarischer Bürgermeister",
+        type:"Person",
+        excerpt:"Pflasterer, Gewerkschafter, Sozialdemokrat – und Brückenbauer ins demokratische Nachkriegs-Selbold.",
+        body:"Nach Kriegsende zieht die SPD mit sechs von 18 Mandaten (1946) in die neue Gemeindevertretung ein.",
+        tags:["Jean Mahr","Neubeginn"],
+        source:["Chronik, 1945/1946"]
+      },
+      {
+        id:"e1946-wohnen",
+        year:1948,
+        date:"späte 1940er",
+        title:"Erste 45 gemeindeeigene Wohnungen",
+        type:"Projekt",
+        excerpt:"Antwort auf akute Wohnungsnot trotz knapper Kassen.",
+        body:"Kommunaler Wohnungsbau prägt das soziale Profil der Stadt – ein SPD-Markenzeichen bis heute.",
+        tags:["Wohnen","Sozialpolitik"],
+        source:["Chronik, 1946ff."]
+      },
+      {
+        id:"e1951-kanal",
+        year:1951,
+        date:"1951–1960er",
+        title:"Beginn der Kanalisierung",
+        type:"Projekt",
+        excerpt:"Infrastrukturprojekt mit langer Laufzeit – Schlüssel zur Stadtentwicklung.",
+        body:"Begleitend entstehen neue Brücken (u. a. 1952 Gründaubrücke am Marktplatz).",
+        tags:["Infrastruktur","Umwelt"],
+        source:["Chronik, 1951/1952"]
+      },
+      {
+        id:"e1961-niedertal",
+        year:1961,
+        date:"1961–1963",
+        title:"Reihenhäuser Niedertalstraße (52 Wohnungen)",
+        type:"Projekt",
+        excerpt:"50 Familien verlassen Baracken – endlich angemessener Wohnraum.",
+        body:"Parallel weitere gemeindeeigene Wohnungen in der Kinzigstraße (8 Einheiten).",
+        tags:["Wohnen","Niedertalstraße","Kinzigstraße"],
+        source:["Chronik, 1961–1963"]
+      },
+      {
+        id:"e1962-freibad",
+        year:1962,
+        date:"1962",
+        title:"Bau des Freibads",
+        type:"Projekt",
+        excerpt:"Freizeit, Gesundheit, Lebensqualität – ein Stück Sommer für alle.",
+        body:"Das Freibad wird zu einem identitätsstiftenden Ort für Generationen.",
+        tags:["Freizeit","Freibad"],
+        source:["Chronik, 1962"]
+      },
+      {
+        id:"e1964-schule",
+        year:1964,
+        date:"1964",
+        title:"Weinbergschule & erste Kläranlage",
+        type:"Projekt",
+        excerpt:"Bildungsausbau plus Umwelttechnik – Doppelschlag für Zukunftsfähigkeit.",
+        body:"Schule samt Turnhalle eröffnet; erste eigene Kläranlage geht in Betrieb.",
+        tags:["Bildung","Umwelt","Weinbergschule"],
+        source:["Chronik, 1964"]
+      },
+      {
+        id:"e1969-kita",
+        year:1969,
+        date:"1969",
+        title:"Kita Buchbergblick",
+        type:"Projekt",
+        excerpt:"Frühe Bildung & Vereinbarkeit rücken in den Fokus.",
+        body:"1973 folgt Kita+Hort „Zum Rödelberg“ mit ausgebauten Betreuungszeiten (später nochmals verstärkt).",
+        tags:["Kinderbetreuung","Kita","Hort"],
+        source:["Chronik, 1969/1973"]
+      },
+      {
+        id:"e1975-schloss",
+        year:1975,
+        date:"1975/1976",
+        title:"Beschluss & Ankauf des Schlossareals",
+        type:"Projekt",
+        excerpt:"Heftig umstritten – später hochgelobt.",
+        body:"Jugendliche (darunter viele Jusos) bauen mit der Gemeinde ein starkes Jugendzentrum auf. Gleichzeitig entstehen in den 1970ern Spiel- & Bolzplätze im ganzen Ort.",
+        tags:["Schloss","Jugendzentrum","Jusos","Spielplätze"],
+        source:["Chronik, 1975/1976/1970er"]
+      },
+      {
+        id:"e1970-kinzigsee",
+        year:1977,
+        date:"1970er",
+        title:"Kinzigsee & Freizeitareal",
+        type:"Projekt",
+        excerpt:"Gegen Widerstand durchgesetzt; schafft Freizeitwert und Jobs.",
+        body:"Aushubmaterial erweitert das Industriegelände – neue Arbeitsplätze entstehen.",
+        tags:["Kinzigsee","Freizeit","Wirtschaft"],
+        source:["Chronik, 1970er"]
+      },
+      {
+        id:"e1979-buecherei",
+        year:1979,
+        date:"1979",
+        title:"Schlossbücherei",
+        type:"Projekt",
+        excerpt:"Offener Wissensort im historischen Ambiente.",
+        body:"Kulturveranstaltungen (Serenaden, Festivals, Lesungen) prägen die 1980er.",
+        tags:["Kultur","Bücherei","Schloss"],
+        source:["Chronik, 1979/1980er"]
+      },
+      {
+        id:"e1983-stadt",
+        year:1983,
+        date:"1983",
+        title:"Langenselbold wird Stadt",
+        type:"Ereignis",
+        excerpt:"Im Rahmen der 875-Jahr-Feier zur Stadt erhoben; Klosterberghalle entsteht.",
+        body:"Ein Meilenstein mit dauerhaftem Effekt für Selbstverständnis und Infrastruktur.",
+        tags:["Stadtwerdung","Klosterberghalle"],
+        source:["Chronik, 1983"]
+      },
+      {
+        id:"e1985-mehrheit",
+        year:1985,
+        date:"1985",
+        title:"Absolute Mehrheit für die SPD",
+        type:"Ereignis",
+        excerpt:"Politische Dominanz – aber auch Debattenkultur (Friedenspolitik u. a.).",
+        body:"Die SPD prägt Sozial-, Kultur- und Umweltpolitik der Stadt in dieser Phase nachhaltig.",
+        tags:["Kommunalwahl","Mehrheit"],
+        source:["Chronik, 1985"]
+      },
+      {
+        id:"e1990-100",
+        year:1990,
+        date:"1990",
+        title:"100 Jahre SPD Langenselbold",
+        type:"Ereignis",
+        excerpt:"206 Mitglieder feiern ein Jahrhundert Engagement vor Ort.",
+        body:"Zeitzeugnisse und Chroniken konsolidieren das kollektive Gedächtnis.",
+        tags:["Jubiläum","Mitglieder"],
+        source:["Chronik, 1990"]
+      }
+    ];
+
+    // --- Filter: Types und Tags aus Daten ableiten ---
+    const TYPES = [...new Set(EVENTS.map(e => e.type))];
+    const ALL_TAGS = [...new Set(EVENTS.flatMap(e => e.tags))].sort((a,b)=>a.localeCompare(b,'de'));
+
+    const state = {
+      activeTypes: new Set(TYPES),  // initial: alle an
+      activeTags: new Set(),        // optional
+      query: ""
+    };
+
+    const filtersEl = document.getElementById("filters");
+    const timelineEl = document.getElementById("timeline");
+    const qEl = document.getElementById("q");
+    const clearEl = document.getElementById("clear");
+
+    function chip(label, group, active=true){
+      const id = `${group}:${label}`;
+      const wrapper = document.createElement("label");
+      wrapper.className = "chip" + (active ? " active":"");
+      wrapper.title = group==="type" ? "Typfilter" : "Tagfilter";
+
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.checked = active;
+      input.ariaLabel = label;
+      input.dataset.group = group;
+      input.dataset.value = label;
+
+      const text = document.createElement("span");
+      text.textContent = label;
+
+      input.addEventListener("change",(ev)=>{
+        const val = ev.target.dataset.value;
+        if(ev.target.dataset.group==="type"){
+          if(ev.target.checked) state.activeTypes.add(val); else state.activeTypes.delete(val);
+        }else{
+          if(ev.target.checked) state.activeTags.add(val); else state.activeTags.delete(val);
+        }
+        wrapper.classList.toggle("active", ev.target.checked);
+        render();
+      });
+
+      wrapper.appendChild(input);
+      wrapper.appendChild(text);
+      return wrapper;
+    }
+
+    function buildFilters(){
+      // Typen
+      TYPES.forEach(t => filtersEl.appendChild(chip(t,"type",true)));
+      // Tags: optional, starten aus
+      ALL_TAGS.forEach(t => filtersEl.appendChild(chip(t,"tag",false)));
+    }
+
+    function groupByYear(items){
+      const m = new Map();
+      items.forEach(e => {
+        if(!m.has(e.year)) m.set(e.year, []);
+        m.get(e.year).push(e);
+      });
+      return [...m.entries()].sort((a,b)=>a[0]-b[0]); // aufwärts
+    }
+
+    function matches(e){
+      if(!state.activeTypes.has(e.type)) return false;
+      if(state.activeTags.size){
+        // mindestens einen Tag treffen
+        const has = e.tags.some(t => state.activeTags.has(t));
+        if(!has) return false;
+      }
+      if(state.query){
+        const q = state.query.toLowerCase();
+        const hay = [e.title,e.excerpt,e.body,(e.tags||[]).join(" "), (e.source||[]).join(" ")].join(" ").toLowerCase();
+        if(!hay.includes(q)) return false;
+      }
+      return true;
+    }
+
+    function render(){
+      timelineEl.innerHTML = "";
+      const items = EVENTS.filter(matches);
+      const groups = groupByYear(items);
+
+      groups.forEach(([year, arr])=>{
+        const yb = document.createElement("div");
+        yb.className = "year-block";
+        const yl = document.createElement("h2");
+        yl.className = "year-label";
+        yl.textContent = year;
+        yb.appendChild(yl);
+
+        arr.forEach(e=>{
+          const wrap = document.createElement("div");
+          wrap.className = "item";
+          const dot = document.createElement("div");
+          dot.className = "node";
+          wrap.appendChild(dot);
+
+          const card = document.createElement("details");
+          card.className = "card";
+          const sum = document.createElement("summary");
+
+          const kind = document.createElement("span");
+          kind.className = "tag";
+          kind.textContent = e.type;
+
+          const title = document.createElement("h3");
+          title.className = "title";
+          title.textContent = e.title;
+
+          const subt = document.createElement("p");
+          subt.className = "subtitle";
+          subt.textContent = e.excerpt;
+
+          sum.appendChild(kind);
+          sum.appendChild(title);
+          sum.appendChild(subt);
+
+          const body = document.createElement("div");
+          body.className = "content";
+          body.innerHTML = `
+            <p>${e.body}</p>
+            <div class="meta">
+              <span class="pill">Datum: ${e.date||e.year}</span>
+              ${e.tags?.length ? `<span class="pill">Tags: ${e.tags.join(", ")}</span>`:""}
+              ${e.source?.length ? `<span class="pill">Quelle: ${e.source.join("; ")}</span>`:""}
+            </div>
+          `;
+
+          card.appendChild(sum);
+          card.appendChild(body);
+          wrap.appendChild(card);
+          yb.appendChild(wrap);
+        });
+
+        timelineEl.appendChild(yb);
+      });
+    }
+
+    // Suche
+    qEl.addEventListener("input", (e)=>{ state.query = e.target.value.trim(); render(); });
+    clearEl.addEventListener("click", ()=>{ qEl.value=""; state.query=""; render(); });
+
+    // Init
+    buildFilters();
+    render();
+  </script>
+</body>
+</html>
