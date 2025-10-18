@@ -684,13 +684,6 @@
             meta.appendChild(tagPill);
           }
 
-          if(e.source && e.source.length){
-            const sourcePill = document.createElement("span");
-            sourcePill.className = "pill";
-            sourcePill.textContent = `📚 ${e.source.join("; ")}`;
-            meta.appendChild(sourcePill);
-          }
-
           body.appendChild(meta);
 
           card.appendChild(sum);
