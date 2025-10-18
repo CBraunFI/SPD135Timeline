@@ -3,36 +3,45 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SPD Langenselbold – Interaktiver Zeitstrahl</title>
-  <meta name="description" content="Interaktiver, vertikaler Zeitstrahl zur Geschichte Langenselbolds mit Schwerpunkt SPD Langenselbold." />
+  <title>SPD Langenselbold – 135 Jahre im Zeitstrahl</title>
+  <meta name="description" content="135 Jahre SPD Langenselbold: Von der Arbeiterbewegung 1887 bis heute. Interaktiver Zeitstrahl mit Personen, Projekten und Meilensteinen der Stadtgeschichte." />
+
+  <!-- Open Graph / Social Media -->
+  <meta property="og:title" content="SPD Langenselbold – 135 Jahre im Zeitstrahl" />
+  <meta property="og:description" content="Interaktiver Zeitstrahl zur Geschichte der SPD Langenselbold seit 1887" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://cbraunfi.github.io/SPD135Timeline/" />
+
   <style>
     :root{
-      --spd-red:#E3000F; /* SPD-Rot */
-      --ink:#111;        /* Textfarbe */
-      --bg:#fbfbfb;      /* Seitenhintergrund */
-      --muted:#6b7280;   /* Sekundärtext */
-      --card:#ffffff;    /* Kartenfläche */
-      --border:#e5e7eb;  /* zarte Linien */
-      --radius:18px;     /* Rundungen */
+      --spd-red:#E3000F;
+      --ink:#111;
+      --bg:#fbfbfb;
+      --muted:#6b7280;
+      --card:#ffffff;
+      --border:#e5e7eb;
+      --radius:12px;
       --shadow:0 10px 28px rgba(0,0,0,.08);
       --maxw:900px;
     }
     *{box-sizing:border-box}
-    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial,sans-serif;scroll-behavior:smooth}
     a{color:var(--spd-red);text-decoration:none}
     a:hover{text-decoration:underline}
+
     header{
       position:sticky;top:0;z-index:10;
-      backdrop-filter:saturate(1.1) blur(8px);
+      backdrop-filter:saturate(1.8) blur(8px);
       background:color-mix(in oklab, white 70%, transparent);
       border-bottom:1px solid var(--border);
     }
     .bar{
-      margin:0 auto;max-width:var(--maxw);padding:14px 20px;display:flex;gap:14px;align-items:center;justify-content:space-between;
+      margin:0 auto;max-width:var(--maxw);padding:14px 20px;display:flex;gap:14px;align-items:center;justify-content:space-between;flex-wrap:wrap;
     }
     .brand{display:flex;align-items:center;gap:12px}
     .brand img{height:36px;width:auto;border-radius:6px}
     .brand h1{font-size:16px;margin:0;font-weight:700;letter-spacing:.2px}
+
     .filters{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
     .filter-section{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
     .tag-toggle{
@@ -45,6 +54,7 @@
     .tag-toggle.expanded::after{transform:rotate(180deg)}
     .tag-filters{display:none;flex-wrap:wrap;gap:8px;margin-top:8px;width:100%}
     .tag-filters.visible{display:flex}
+
     .chip{
       display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer;font-size:14px;
       user-select:none;transition:all .2s ease;
@@ -52,65 +62,105 @@
     .chip:hover{border-color:var(--spd-red);background:color-mix(in oklab, var(--spd-red) 5%, white)}
     .chip input{accent-color:var(--spd-red)}
     .chip.active{border-color:var(--spd-red);box-shadow:0 0 0 3px color-mix(in oklab, var(--spd-red) 25%, transparent)}
-    main{margin:0 auto;max-width:var(--maxw);padding:20px}
-    .legend{margin:18px 0;color:var(--muted);font-size:14px}
-    .timeline{
-      position:relative;margin:10px 0 80px 0;padding-left:26px;
+
+    main{margin:0 auto;max-width:var(--maxw);padding:20px;min-height:100vh}
+    .hero{
+      text-align:center;padding:40px 20px;background:linear-gradient(135deg, color-mix(in oklab, var(--spd-red) 10%, white), white);
+      border-radius:var(--radius);margin-bottom:30px;
     }
-    /* vertikale Linie */
-    .timeline::before{
-      content:"";position:absolute;left:10px;top:0;bottom:0;width:2px;background:linear-gradient(var(--spd-red), var(--spd-red));
-      box-shadow:0 0 0 4px color-mix(in oklab, var(--spd-red) 18%, transparent);
-      border-radius:2px;
-    }
-    .year-block{
-      margin:22px 0 0 0;
-    }
-    .year-label{
-      position:relative;left:-26px;margin:0;color:#333;font-weight:800;letter-spacing:.3px;
-      background:linear-gradient(90deg, var(--spd-red), color-mix(in oklab, var(--spd-red) 30%, white));
-      -webkit-background-clip:text;background-clip:text;color:transparent;
-      font-size:22px;
-    }
-    .item{
-      position:relative;margin:12px 0 0 0;padding:0 0 0 0;
-    }
-    .node{
-      position:absolute;left:-2px;top:10px;transform:translateX(-50%);
-      height:12px;width:12px;border:2px solid white;background:var(--spd-red);border-radius:999px;box-shadow:0 0 0 2px var(--spd-red), 0 0 0 6px color-mix(in oklab, var(--spd-red) 20%, transparent);
-    }
-    details.card{
-      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-    summary{
-      list-style:none;cursor:pointer;display:flex;align-items:flex-start;gap:12px;padding:16px 18px;
-    }
-    summary::-webkit-details-marker{display:none}
-    .tag{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:4px 8px;border-radius:999px;background:#f5f5f5;border:1px solid var(--border);color:#444}
-    .title{font-size:18px;font-weight:700;margin:0}
-    .subtitle{margin:2px 0 0 0;color:var(--muted);font-size:14px}
-    .content{padding:0 18px 16px 18px;color:#2a2a2a}
-    .meta{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0 0 0}
-    .meta .pill{font-size:12px;color:#555;padding:6px 10px;border:1px solid var(--border);border-radius:999px;background:#fff}
-    .searchbar{
-      width:100%;margin:12px 0 0 0;display:flex;gap:8px
-    }
+    .hero h2{font-size:32px;margin:0 0 10px 0;color:var(--spd-red);font-weight:800}
+    .hero p{color:var(--muted);font-size:18px;margin:0;max-width:68ch;margin:0 auto}
+
+    .legend{margin:18px 0;color:var(--muted);font-size:14px;line-height:1.6;max-width:68ch}
+    .searchbar{width:100%;margin:12px 0 0 0;display:flex;gap:8px}
     .searchbar input{
       flex:1;border:1px solid var(--border);border-radius:999px;padding:10px 14px;background:#fff;
-      outline:none;box-shadow:inset 0 1px 0 rgba(0,0,0,.03)
+      outline:none;box-shadow:inset 0 1px 0 rgba(0,0,0,.03);font-size:15px
     }
     .searchbar button{
-      border:none;border-radius:999px;padding:10px 14px;background:var(--spd-red);color:#fff;font-weight:700;cursor:pointer
+      border:none;border-radius:999px;padding:10px 14px;background:var(--spd-red);color:#fff;font-weight:700;cursor:pointer;
+      transition:background .2s
     }
+    .searchbar button:hover{background:color-mix(in oklab, var(--spd-red) 85%, black)}
+
+    .timeline{
+      position:relative;margin:30px 0 80px 0;padding-left:80px;
+      scroll-snap-type:y proximity;
+    }
+    .timeline::before{
+      content:"";position:absolute;left:60px;top:0;bottom:0;width:3px;
+      background:linear-gradient(180deg, var(--spd-red), var(--spd-red));
+      box-shadow:0 0 0 5px color-mix(in oklab, var(--spd-red) 15%, transparent);
+      border-radius:3px;
+    }
+
+    .year-block{margin:30px 0 0 0;scroll-snap-align:start}
+    .year-block[data-year]{position:relative}
+    .year-label{
+      position:relative;left:-80px;margin:0 0 16px 0;font-weight:800;letter-spacing:.4px;
+      background:linear-gradient(90deg, var(--spd-red), color-mix(in oklab, var(--spd-red) 40%, white));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+      font-size:28px;
+    }
+
+    .item{position:relative;margin:16px 0;padding:0;scroll-snap-align:start}
+    .item[hidden]{display:none}
+    .node{
+      position:absolute;left:-22px;top:12px;transform:translateX(-50%);
+      height:14px;width:14px;border:3px solid white;background:var(--spd-red);border-radius:999px;
+      box-shadow:0 0 0 2px var(--spd-red), 0 0 0 7px color-mix(in oklab, var(--spd-red) 18%, transparent);
+    }
+    .node.milestone{
+      height:18px;width:18px;border-width:4px;
+      box-shadow:0 0 0 3px var(--spd-red), 0 0 0 10px color-mix(in oklab, var(--spd-red) 25%, transparent);
+    }
+
+    details.card{
+      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);
+      overflow:hidden;transition:all .2s ease;
+    }
+    details.card:hover{box-shadow:0 12px 32px rgba(0,0,0,.12)}
+    details.card[open]{border-color:color-mix(in oklab, var(--spd-red) 40%, var(--border))}
+
+    summary{
+      list-style:none;cursor:pointer;display:flex;align-items:flex-start;gap:12px;padding:16px 18px;
+      user-select:none;
+    }
+    summary::-webkit-details-marker{display:none}
+    summary:focus{outline:2px solid var(--spd-red);outline-offset:2px}
+
+    .type-badge{
+      font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;
+      padding:5px 10px;border-radius:999px;background:#f5f5f5;border:1px solid var(--border);color:#555;
+      white-space:nowrap;flex-shrink:0
+    }
+    .event-content{flex:1;min-width:0}
+    .title{font-size:18px;font-weight:700;margin:0 0 4px 0;line-height:1.3}
+    .subtitle{margin:0;color:var(--muted);font-size:14px;line-height:1.5}
+
+    .content{padding:0 18px 18px 18px;color:#2a2a2a;line-height:1.7;max-width:68ch}
+    .content p{margin:0 0 12px 0}
+    .content p:last-child{margin-bottom:0}
+
+    .meta{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0 0 0}
+    .meta .pill{font-size:12px;color:#555;padding:6px 11px;border:1px solid var(--border);border-radius:999px;background:#fff}
+    .context-badge{background:color-mix(in oklab, var(--spd-red) 10%, white);color:var(--spd-red);border-color:color-mix(in oklab, var(--spd-red) 30%, transparent)}
+
     footer{
-      margin:60px auto 40px;max-width:var(--maxw);color:var(--muted);font-size:13px;padding:0 20px
+      margin:80px auto 40px;max-width:var(--maxw);color:var(--muted);font-size:13px;padding:0 20px;
+      border-top:1px solid var(--border);padding-top:30px;line-height:1.6
     }
-    /* kleine Feinheiten mobil */
+    footer p{margin:0 0 10px 0}
+    footer a{color:var(--spd-red);text-decoration:underline}
+
     @media (max-width:700px){
       .brand h1{display:none}
-      .year-label{font-size:19px}
+      .timeline{padding-left:50px}
+      .timeline::before{left:40px}
+      .year-label{font-size:22px;left:-50px}
+      .node{left:-12px}
       .title{font-size:17px}
+      .hero h2{font-size:26px}
     }
   </style>
 </head>
@@ -118,275 +168,350 @@
   <header>
     <div class="bar">
       <div class="brand">
-        <!-- HINWEIS: Ersetze src durch deinen GitHub-Pfad, z.B. /assets/logo.png -->
-        <img src="assets/logo.png" alt="SPD Langenselbold Logo" />
-        <h1>Geschichte von Langenselbold – Fokus SPD</h1>
+        <img src="assets/logo.png" alt="SPD Langenselbold Logo" onerror="this.style.display='none'" />
+        <h1>SPD Langenselbold – 135 Jahre Geschichte</h1>
       </div>
-      <div class="filters" id="filters">
-        <!-- Filterchips werden via JS befüllt -->
-      </div>
+      <div class="filters" id="filters"></div>
     </div>
   </header>
 
   <main>
+    <div class="hero">
+      <h2>135 Jahre SPD Langenselbold</h2>
+      <p>Mut, Arbeit, Gemeinschaft – Eine Zeitreise durch die Geschichte der Sozialdemokratie in Langenselbold</p>
+    </div>
+
     <div class="searchbar">
       <input id="q" type="search" placeholder="Suche nach Personen, Projekten, Stichworten …" aria-label="Suche" />
       <button id="clear">Löschen</button>
     </div>
+
     <p class="legend">
-      Dieser interaktive Zeitstrahl dokumentiert die Geschichte Langenselbolds mit besonderem Fokus auf die Entwicklung und die Errungenschaften der SPD seit 1887.
-      Scrollen Sie chronologisch von oben nach unten durch über ein Jahrhundert lokaler Politik und Stadtentwicklung.
-      Klicken Sie auf eine Ereigniskarte, um ausführliche Details, Hintergründe und Quellennachweise zu sehen.
-      Nutzen Sie die Typfilter (Ereignis, Person, Projekt), um gezielt nach Kategorien zu suchen, oder öffnen Sie die Tagfilter für eine thematische Navigation.
-      Die Suchfunktion durchsucht alle Inhalte in Echtzeit – ideal, um bestimmte Personen, Orte oder Themen schnell zu finden.
+      Dieser interaktive Zeitstrahl dokumentiert 135 Jahre SPD-Geschichte in Langenselbold – von den Anfängen der Arbeiterbewegung 1863
+      über die Gründung 1890, die dunklen Jahre der NS-Diktatur bis zum demokratischen Wiederaufbau und den großen Infrastrukturprojekten
+      der Nachkriegszeit. Scrollen Sie chronologisch durch die Jahrzehnte, klicken Sie auf Ereigniskarten für Details, nutzen Sie die
+      Typfilter (Kontext, Ereignis, Person, Projekt) oder öffnen Sie die Themen-Tags für gezielte Navigation.
     </p>
 
-    <section class="timeline" id="timeline" aria-label="Zeitstrahl"></section>
+    <section class="timeline" id="timeline" aria-label="Zeitstrahl" role="feed"></section>
   </main>
 
   <footer>
-    <p>
-      Quellen (Auszug): Chronik SPD Langenselbold; Festschriften 70/90/100 Jahre; Quiznotizen. 
-      Siehe Datenobjekt „source“ je Ereignis für Kurzverweis.
-    </p>
-    <p>Design: SPD-Rot, klare Typo, barrierearme Kontraste. Prototyp, offen erweiterbar.</p>
+    <p><strong>Quellen:</strong> Chronik SPD Langenselbold; Festschriften 70/90/100 Jahre SPD Langenselbold;
+    Wikipedia-Artikel zur <a href="https://de.wikipedia.org/wiki/Sozialdemokratische_Partei_Deutschlands" target="_blank" rel="noopener">Geschichte der SPD</a>,
+    <a href="https://de.wikipedia.org/wiki/Geschichte_Deutschlands" target="_blank" rel="noopener">Geschichte Deutschlands</a> und
+    <a href="https://de.wikipedia.org/wiki/Geschichte_Hessens" target="_blank" rel="noopener">Geschichte Hessens</a>.</p>
+    <p>Design: SPD-Corporate-Identity (Rot #E3000F), barrierearm, responsiv. Ein Projekt der SPD Langenselbold.</p>
+    <p><a href="https://github.com/CBraunFI/SPD135Timeline" target="_blank" rel="noopener">GitHub Repository</a></p>
   </footer>
 
   <script>
-    // --- Daten: Ereignisse (Auszug; kann beliebig erweitert werden) ---
-    // Felder:
-    // id, year, date, title, type: ("Ereignis"|"Person"|"Projekt"),
-    // excerpt, body, tags:[…], source:[kurze Verweise], link(optional)
     const EVENTS = [
       {
-        id:"e1887-av",
-        year:1887,
-        date:"1887",
-        title:"Arbeiterverein in Langenselbold",
-        type:"Ereignis",
-        excerpt:"In Langenselbold entsteht ein Arbeiterverein – Keimzelle organisierter Interessenvertretung der arbeitenden Bevölkerung.",
-        body:"Der Arbeiterverein von 1887 markiert den Beginn organisierter Interessenvertretung in Langenselbold. In einer Zeit, in der Arbeiter rechtlich und sozial noch kaum geschützt waren, bildeten solche Vereine die ersten Anlaufstellen für gegenseitige Unterstützung, Bildung und politische Willensbildung. Diese frühe Arbeiterorganisation legte den Grundstein für die späteren sozialdemokratischen Strukturen vor Ort und war Teil der breiteren Arbeiterbewegung, die sich gegen Ende des 19. Jahrhunderts in ganz Deutschland formierte.",
-        tags:["Arbeiterbewegung","Vorläufer"],
-        source:["Chronik, 1887"],
+        id:"ctx-1863",year:1863,date:"23. Mai 1863",
+        title:"ADAV-Gründung in Leipzig",type:"Kontext",
+        excerpt:"Ferdinand Lassalle gründet den Allgemeinen Deutschen Arbeiterverein (ADAV) – Beginn der organisierten Arbeiterbewegung in Deutschland.",
+        body:"Mit der Gründung des ADAV beginnt die Geschichte der organisierten deutschen Arbeiterbewegung. Lassalle fordert allgemeines Wahlrecht und staatlich geförderte Produktivgenossenschaften. Der ADAV ist eine der Wurzeln der späteren SPD.",
+        tags:["Deutschland","Arbeiterbewegung","Kontext"],
+        source:["Wikipedia: Geschichte der SPD"],
+        milestone:false
       },
       {
-        id:"e1890-gruendung",
-        year:1890,
-        date:"1890",
-        title:"Gründung des sozialdemokratischen Wahlvereins",
-        type:"Ereignis",
-        excerpt:"Der Hanauer Reichstagsabgeordnete Karl Frohme spricht vom Fenster des Brauhauses zu etwa 200 Wahlberechtigten – die Geburtsstunde der organisierten Sozialdemokratie in Langenselbold.",
-        body:"1890 markiert die offizielle Gründung des sozialdemokratischen Wahlvereins in Langenselbold. Der Hanauer Reichstagsabgeordnete Karl Frohme hält eine bemerkenswerte Rede aus dem Fenster des Brauhauses heraus, da größere Versammlungsräume politisch riskant waren. Rund 200 Wahlberechtigte versammeln sich – ein beachtlicher Zulauf in einer Zeit, in der Sozialdemokraten noch als ‚Reichsfeinde' galten. Die anfänglichen Mitglieder stammen überwiegend aus der Bauarbeiterschaft. Treffen finden im Isenburger Hof statt, was damals politischen Mut erforderte: Die Polizei observierte Gastwirte, die den ‚Roten' Räume zur Verfügung stellten. Trotz dieser Repression wächst der Verein stetig.",
-        tags:["Gründung","Frohme","Brauhaus","Isenburger Hof"],
-        source:["Chronik, 1890"], link:null
+        id:"ctx-1869",year:1869,date:"August 1869",
+        title:"SAP-Gründung in Eisenach",type:"Kontext",
+        excerpt:"August Bebel und Wilhelm Liebknecht gründen die Sozialdemokratische Arbeiterpartei (SAP) – marxistische Alternative zum ADAV.",
+        body:"Die SAP (auch 'Eisenacher' genannt) vertritt eine marxistischere Linie als Lassalles ADAV. Sie fordert internationale Solidarität der Arbeiterklasse und lehnt den preußischen Obrigkeitsstaat ab.",
+        tags:["Deutschland","Arbeiterbewegung","Kontext"],
+        source:["Wikipedia: Geschichte der SPD"],
+        milestone:false
       },
       {
-        id:"e1898-hosse",
-        year:1898,
-        date:"1898",
-        title:"Zigarrenfabrik Hosse – Zweigstelle im ‚Fruchtbau'",
-        type:"Ereignis",
-        excerpt:"Die Eröffnung einer Zigarrenfabrik-Zweigstelle bringt Industriearbeitsplätze nach Langenselbold und stärkt gleichzeitig die sozialdemokratische Bewegung.",
-        body:"Mit der Einrichtung einer Zweigstelle der Zigarrenfabrik Hosse im historischen ‚Fruchtbau' hält die Industrialisierung Einzug in Langenselbold. Die neuen Fabrikarbeitsplätze verändern die soziale Struktur des Ortes nachhaltig und schaffen eine breitere Basis für gewerkschaftliche und politische Organisation. Industriearbeiter waren traditionell empfänglicher für sozialdemokratische Ideen als die bäuerliche Bevölkerung. Parallel nutzt Gustav Hoch aus Hanau, ein überregional bekannter Sozialdemokrat, seine Vortragsreisen, um in der Region für die Partei zu werben. Seine Reden finden großen Anklang und tragen dazu bei, dass die SPD in Langenselbold weiter an Boden gewinnt.",
-        tags:["Wirtschaft","Fruchtbau","Gustav Hoch"],
-        source:["Chronik, 1898"]
+        id:"ctx-1875",year:1875,date:"22.–27. Mai 1875",
+        title:"Vereinigung zur SAPD (Gothaer Programm)",type:"Kontext",
+        excerpt:"ADAV und SAP vereinigen sich zur Sozialistischen Arbeiterpartei Deutschlands (SAPD) auf dem Gothaer Vereinigungsparteitag.",
+        body:"Der Gothaer Parteitag vereint die beiden Flügel der Arbeiterbewegung zur SAPD. Das Gothaer Programm verbindet lassalleanische und marxistische Positionen. Die Partei wird 1890 zur SPD.",
+        tags:["Deutschland","Arbeiterbewegung","Kontext","Vereinigung"],
+        source:["Wikipedia: Gothaer Programm"],
+        milestone:false
       },
       {
-        id:"e1914-lazarett",
-        year:1914,
-        date:"1914",
-        title:"Vereinslazarett im Schloss",
-        type:"Projekt",
-        excerpt:"Am 12. Oktober treffen die ersten 25 Verwundeten ein.",
-        body:"Das Schloss dient im Ersten Weltkrieg als Lazarett – ein drastischer Einschnitt ins lokale Leben.",
-        tags:["Schloss","Erster Weltkrieg","Gesundheit"],
-        source:["Chronik, 1914"]
+        id:"ctx-1878",year:1878,date:"21. Oktober 1878",
+        title:"Sozialistengesetz tritt in Kraft",type:"Kontext",
+        excerpt:"Bismarck verbietet sozialdemokratische Organisationen, Versammlungen und Druckschriften – bis 1890.",
+        body:"Unter dem Vorwand zweier Attentate auf Kaiser Wilhelm I. erlässt Reichskanzler Bismarck das 'Gesetz gegen die gemeingefährlichen Bestrebungen der Sozialdemokratie'. Vereine werden aufgelöst, Zeitungen verboten, Funktionäre verhaftet oder ausgewiesen. Trotz Repression wächst die Bewegung im Untergrund.",
+        tags:["Deutschland","Repression","Bismarck","Kontext"],
+        source:["Wikipedia: Sozialistengesetz"],
+        milestone:false
       },
       {
-        id:"e1918-19-wechsel",
-        year:1918,
-        date:"1918–1919",
-        title:"USPD/KPD-Wechsel vieler Mitglieder",
-        type:"Ereignis",
-        excerpt:"Nach 1918 wechselt eine Mehrheit lokal zur USPD und 1919 zur KPD; nur wenige Sozialdemokraten bleiben.",
-        body:"Trotz Abwanderung führen u. a. Müller, Raab, Hedderich, Häfner, Bendorf, Mahr und die beiden Wilhelm Betz die Parteiarbeit fort.",
-        tags:["Parteigeschichte","USPD","KPD"],
-        source:["Chronik, 1918/1919"]
+        id:"e1887-av",year:1887,date:"1887",
+        title:"Arbeiterverein in Langenselbold gegründet",type:"Ereignis",
+        excerpt:"Trotz Sozialistengesetz entsteht in Langenselbold ein Arbeiterverein – erste lokale Keimzelle organisierter Interessenvertretung.",
+        body:"Mitten in der Zeit der Repression durch das Sozialistengesetz formiert sich in Langenselbold ein Arbeiterverein. Solche Vereine dienen als Tarnorganisationen für sozialdemokratische Aktivitäten: gegenseitige Unterstützung, Bildung, politische Diskussion. Der Langenselbolder Verein legt den Grundstein für die spätere Parteigründung 1890.",
+        tags:["Arbeiterbewegung","Vorläufer","Organisation"],
+        source:["Chronik SPD Langenselbold, Abschnitt 1887"],
+        milestone:false
       },
       {
-        id:"e1929-mandate",
-        year:1929,
-        date:"1929",
-        title:"SPD gewinnt zwei Sitze in der Gemeindevertretung",
-        type:"Ereignis",
-        excerpt:"Rückkehr in die kommunale Verantwortung.",
-        body:"Unter Jean Müller gelingt der SPD nach den Verlusten der frühen 1920er die erneute Verankerung.",
-        tags:["Kommunalwahl"],
-        source:["Chronik, 1929"]
+        id:"ctx-1890-end",year:1890,date:"25. Januar 1890",
+        title:"Ende des Sozialistengesetzes",type:"Kontext",
+        excerpt:"Das Sozialistengesetz läuft aus – Startschuss für legale Parteiarbeit und rasantes Wachstum der Sozialdemokratie.",
+        body:"Nach zwölf Jahren Repression wird das Sozialistengesetz nicht verlängert. Die Sozialdemokratie tritt aus dem Untergrund heraus, gründet offen Vereine und Zeitungen. Im selben Jahr erfolgt die Umbenennung in SPD (Sozialdemokratische Partei Deutschlands) auf dem Erfurter Parteitag 1891.",
+        tags:["Deutschland","Repression","Kontext","Zäsur"],
+        source:["Wikipedia: Sozialistengesetz"],
+        milestone:true
       },
       {
-        id:"e1933-verbot",
-        year:1933,
-        date:"1933",
-        title:"Verbot des Ortsvereins durch die Nazis",
-        type:"Ereignis",
-        excerpt:"Die Nationalsozialisten verbieten den SPD-Ortsverein. Jean Mahr, ein führender Sozialdemokrat, wird zu 15 Monaten Gefängnis verurteilt.",
-        body:"Mit der Machtübernahme der Nationalsozialisten 1933 endet die demokratische Ära abrupt. Der SPD-Ortsverein wird zwangsaufgelöst, politische Gegner werden systematisch verfolgt. Jean Mahr, eine zentrale Figur der lokalen Sozialdemokratie, erhält eine Gefängnisstrafe von 15 Monaten – ein typisches Schicksal für aktive Sozialdemokraten in dieser Zeit. Viele Genossen ziehen sich zurück, gehen in die innere Emigration oder werden inhaftiert. Parallel dazu erwirbt die nun gleichgeschaltete Gemeinde den historischen ‚Fruchtbau', der zuvor ein Ort industrieller Arbeit und sozialdemokratischer Organisation gewesen war. Die Jahre bis 1945 sind geprägt von Repression, Überwachung und der Zerschlagung aller demokratischen Strukturen.",
-        tags:["NS-Zeit","Repression","Fruchtbau","Jean Mahr"],
-        source:["Chronik, 1933"]
+        id:"e1890-gruendung",year:1890,date:"1890",
+        title:"Gründung des sozialdemokratischen Wahlvereins Langenselbold",type:"Ereignis",
+        excerpt:"Karl Frohme, Reichstagsabgeordneter aus Hanau, spricht 'aus dem Fenster des Brauhauses' zu etwa 200 Wahlberechtigten – Geburtsstunde der SPD Langenselbold.",
+        body:"Mit dem Ende des Sozialistengesetzes gründet sich 1890 der sozialdemokratische Wahlverein in Langenselbold. Der Hanauer Reichstagsabgeordnete Karl Frohme hält eine legendäre Rede vom Fenster des Brauhauses aus – ein Zeichen dafür, dass größere Versammlungsräume noch immer politisch heikel sind. Etwa 200 Wahlberechtigte hören zu, überwiegend Bauarbeiter. Versammlungen finden im Isenburger Hof statt. Gastwirte, die den 'Roten' Räume geben, werden von der Polizei beobachtet. Ein zeitgenössisches Spottgedicht erzählt vom 'Schuster in der Roten Hohl' – Zeichen für die Außenseiterrolle der frühen Sozialdemokraten.",
+        tags:["Gründung","Frohme","Brauhaus","Isenburger Hof","Wahlen"],
+        source:["Chronik SPD Langenselbold, Abschnitt 1890"],
+        milestone:true
       },
       {
-        id:"e1945-mahr",
-        year:1945,
-        date:"25. April 1945",
-        title:"Jean Mahr wird kommissarischer Bürgermeister",
-        type:"Person",
-        excerpt:"Am Tag nach der Befreiung wird der Pflasterer, Gewerkschafter und Sozialdemokrat Jean Mahr kommissarischer Bürgermeister – Symbol des demokratischen Neubeginns.",
-        body:"Am 25. April 1945, unmittelbar nach dem Einmarsch amerikanischer Truppen und der Befreiung vom NS-Regime, wird Jean Mahr zum kommissarischen Bürgermeister ernannt. Seine Ernennung ist kein Zufall: Als verfolgter Sozialdemokrat, der Gefängnis und Repression erlebt hatte, steht er für demokratische Kontinuität und moralische Integrität. Der gelernte Pflasterer und engagierte Gewerkschafter baut Brücken zwischen den verschiedenen politischen Lagern und hilft, Langenselbold in die Nachkriegsordnung zu überführen. Bei den ersten demokratischen Kommunalwahlen 1946 gewinnt die SPD sechs von 18 Mandaten – ein respektables Ergebnis angesichts der schwierigen Ausgangslage. Jean Mahr verkörpert die Verbindung zwischen dem Widerstand gegen den Nationalsozialismus und dem demokratischen Aufbau nach 1945.",
-        tags:["Jean Mahr","Neubeginn"],
-        source:["Chronik, 1945/1946"]
+        id:"e1898-hosse",year:1898,date:"1898",
+        title:"Zigarrenfabrik Hosse eröffnet Zweigstelle im 'Fruchtbau'",type:"Ereignis",
+        excerpt:"Industrialisierung kommt nach Langenselbold – neue Fabrikarbeitsplätze schaffen Basis für gewerkschaftliche und sozialdemokratische Organisation.",
+        body:"Die Eröffnung einer Zweigstelle der Zigarrenfabrik Hosse im historischen 'Fruchtbau' markiert den Beginn der Industrialisierung in Langenselbold. Fabrikarbeiter sind traditionell empfänglicher für sozialdemokratische Ideen als die bäuerliche Bevölkerung. Parallel wirbt Gustav Hoch aus Hanau, ein überregional bekannter Sozialdemokrat, in Vorträgen für die Partei. Die SPD gewinnt an Boden.",
+        tags:["Wirtschaft","Fruchtbau","Gustav Hoch","Industrialisierung"],
+        source:["Chronik SPD Langenselbold, Abschnitt 1898"],
+        milestone:false
       },
       {
-        id:"e1946-wohnen",
-        year:1948,
-        date:"späte 1940er",
-        title:"Erste 45 gemeindeeigene Wohnungen",
-        type:"Projekt",
-        excerpt:"Trotz extrem knapper kommunaler Kassen investiert die Gemeinde in bezahlbaren Wohnraum – eine entschiedene Antwort auf die akute Wohnungsnot der Nachkriegszeit.",
-        body:"Die späten 1940er Jahre sind geprägt von verheerenden Wohnungsengpässen. Flüchtlinge, Vertriebene und Rückkehrer aus dem Krieg suchen verzweifelt nach Unterkünften. In dieser Situation entscheidet sich die von der SPD mitgeprägte Gemeindeverwaltung für einen mutigen Schritt: Trotz äußerst knapper kommunaler Kassen wird in den Bau von 45 gemeindeeigenen Wohnungen investiert. Dieses frühe Engagement im kommunalen Wohnungsbau wird zum Markenzeichen sozialdemokratischer Politik in Langenselbold. Es geht nicht nur um Dächer über dem Kopf, sondern um menschenwürdiges Wohnen, soziale Stabilität und den Zusammenhalt der Gemeinschaft. Die Entscheidung legt den Grundstein für eine jahrzehntelange Tradition des sozialen Wohnungsbaus, die das Profil der Stadt bis heute prägt.",
-        tags:["Wohnen","Sozialpolitik"],
-        source:["Chronik, 1946ff."]
+        id:"ctx-1900",year:1900,date:"um 1900",
+        title:"Soziale Lage der Arbeiterschaft",type:"Kontext",
+        excerpt:"12–14 Stunden Arbeit täglich, Winterarbeitslosigkeit, Kinderarbeit – die harten Realitäten der Arbeiterschaft um die Jahrhundertwende.",
+        body:"Die Lebens- und Arbeitsbedingungen um 1900 sind hart: Arbeiter schuften 12 bis 14 Stunden am Tag, Winterarbeitslosigkeit trifft Bauarbeiter regelmäßig, Kinderarbeit ist verbreitet. Es gibt kaum soziale Absicherung. Diese Verhältnisse treiben die Menschen zur Sozialdemokratie, die für Arbeiterschutz, Bildung und politische Teilhabe kämpft.",
+        tags:["Arbeiterbedingungen","Soziales","Kontext"],
+        source:["Chronik SPD Langenselbold, ca. 1900"],
+        milestone:false
       },
       {
-        id:"e1951-kanal",
-        year:1951,
-        date:"1951–1960er",
-        title:"Beginn der Kanalisierung",
-        type:"Projekt",
-        excerpt:"Infrastrukturprojekt mit langer Laufzeit – Schlüssel zur Stadtentwicklung.",
-        body:"Begleitend entstehen neue Brücken (u. a. 1952 Gründaubrücke am Marktplatz).",
-        tags:["Infrastruktur","Umwelt"],
-        source:["Chronik, 1951/1952"]
+        id:"e1914-lazarett",year:1914,date:"12. Oktober 1914",
+        title:"Vereinslazarett im Schloss eingerichtet",type:"Projekt",
+        excerpt:"Erster Weltkrieg: Das Langenselbolder Schloss wird Lazarett, am 12. Oktober treffen die ersten 25 Verwundeten ein.",
+        body:"Mit Beginn des Ersten Weltkriegs wandelt sich das Schloss zum Vereinslazarett. Der Krieg verändert das Leben in Langenselbold radikal. Die SPD ist gespalten zwischen Burgfriedenspolitik und kriegskritischen Stimmen – eine Spaltung, die 1917/18 zur Abspaltung der USPD führen wird.",
+        tags:["Erster Weltkrieg","Schloss","Gesundheit"],
+        source:["Chronik SPD Langenselbold, 1914"],
+        milestone:false
       },
       {
-        id:"e1961-niedertal",
-        year:1961,
-        date:"1961–1963",
-        title:"Reihenhäuser Niedertalstraße (52 Wohnungen)",
-        type:"Projekt",
-        excerpt:"50 Familien verlassen Baracken – endlich angemessener Wohnraum.",
-        body:"Parallel weitere gemeindeeigene Wohnungen in der Kinzigstraße (8 Einheiten).",
-        tags:["Wohnen","Niedertalstraße","Kinzigstraße"],
-        source:["Chronik, 1961–1963"]
+        id:"ctx-1918",year:1918,date:"9. November 1918",
+        title:"Novemberrevolution – Ende des Kaiserreichs",type:"Kontext",
+        excerpt:"Revolution beendet das Kaiserreich, Philipp Scheidemann ruft die Republik aus – Weimarer Republik beginnt.",
+        body:"Die Novemberrevolution beendet die Monarchie. Philipp Scheidemann (SPD) ruft die deutsche Republik aus, Karl Liebknecht (Spartakusbund) die sozialistische Republik. Es folgen Wochen des Ringens um die politische Ordnung, begleitet von blutigen Konflikten zwischen gemäßigten und radikalen Kräften.",
+        tags:["Deutschland","Weimar","Revolution","Kontext"],
+        source:["Wikipedia: Novemberrevolution"],
+        milestone:true
       },
       {
-        id:"e1962-freibad",
-        year:1962,
-        date:"1962",
-        title:"Bau des Freibads",
-        type:"Projekt",
-        excerpt:"Freizeit, Gesundheit, Lebensqualität – ein Stück Sommer für alle.",
-        body:"Das Freibad wird zu einem identitätsstiftenden Ort für Generationen.",
-        tags:["Freizeit","Freibad"],
-        source:["Chronik, 1962"]
+        id:"e1918-19-spaltung",year:1918,date:"1918–1920",
+        title:"Spaltung: USPD und KPD gewinnen lokal die Mehrheit",type:"Ereignis",
+        excerpt:"Nach 1918 wechseln viele Langenselbolder Sozialdemokraten zunächst zur USPD, 1920 zur KPD. Die SPD verliert vorübergehend fast alle Mandate.",
+        body:"Die revolutionären Wirren 1918/19 spalten die Arbeiterbewegung. In Hanau und Langenselbold wechselt die Mehrheit der organisierten Arbeiter zur USPD (Unabhängige Sozialdemokratische Partei), viele 1919/20 weiter zur KPD. 1920 hat die SPD in Langenselbold kein Mandat. Nur wenige Genossen halten der Partei die Treue: Jean Müller, Jean Mahr, Raab, Hedderich, Häfner, Bendorf und die beiden Wilhelm Betz führen die Arbeit fort – Kontinuitätsanker in schwieriger Zeit.",
+        tags:["Parteigeschichte","USPD","KPD","Weimar","Spaltung"],
+        source:["Chronik SPD Langenselbold, 1918–1920"],
+        milestone:false
       },
       {
-        id:"e1964-schule",
-        year:1964,
-        date:"1964",
-        title:"Weinbergschule & erste Kläranlage",
-        type:"Projekt",
-        excerpt:"Bildungsausbau plus Umwelttechnik – Doppelschlag für Zukunftsfähigkeit.",
-        body:"Schule samt Turnhalle eröffnet; erste eigene Kläranlage geht in Betrieb.",
-        tags:["Bildung","Umwelt","Weinbergschule"],
-        source:["Chronik, 1964"]
+        id:"e1929-mandate",year:1929,date:"1929",
+        title:"SPD gewinnt zwei Sitze zurück",type:"Ereignis",
+        excerpt:"Nach Jahren ohne Mandat kehrt die SPD 1929 mit zwei Sitzen in die Gemeindevertretung zurück – Jean Müller führt die Erneuerung an.",
+        body:"1929 gelingt der SPD unter Jean Müller die Rückkehr in die Gemeindevertretung. Nach den Verlusten der frühen 1920er Jahre ist dies ein wichtiges Zeichen der Erneuerung und lokalen Verankerung. Die Weimarer Republik steht allerdings bereits vor schweren Bewährungsproben: Weltwirtschaftskrise, Massenarbeitslosigkeit, politische Radikalisierung.",
+        tags:["Kommunalwahl","Wahlen","Weimar"],
+        source:["Chronik SPD Langenselbold, 1929"],
+        milestone:false
       },
       {
-        id:"e1969-kita",
-        year:1969,
-        date:"1969",
-        title:"Kita Buchbergblick",
-        type:"Projekt",
-        excerpt:"Frühe Bildung & Vereinbarkeit rücken in den Fokus.",
-        body:"1973 folgt Kita+Hort „Zum Rödelberg“ mit ausgebauten Betreuungszeiten (später nochmals verstärkt).",
-        tags:["Kinderbetreuung","Kita","Hort"],
-        source:["Chronik, 1969/1973"]
+        id:"ctx-1933",year:1933,date:"30. Januar 1933",
+        title:"NS-Machtübernahme",type:"Kontext",
+        excerpt:"Hitler wird Reichskanzler – Ende der Demokratie, Beginn der NS-Diktatur.",
+        body:"Mit Hitlers Ernennung zum Reichskanzler beginnt die systematische Zerstörung der Weimarer Demokratie. SPD und Gewerkschaften werden zerschlagen, politische Gegner verfolgt, verhaftet, ermordet. Bis 1945 herrscht die nationalsozialistische Diktatur.",
+        tags:["Deutschland","NS-Zeit","Kontext"],
+        source:["Wikipedia: Machtergreifung"],
+        milestone:true
       },
       {
-        id:"e1975-schloss",
-        year:1975,
-        date:"1975/1976",
-        title:"Beschluss & Ankauf des Schlossareals",
-        type:"Projekt",
-        excerpt:"Eine der umstrittensten politischen Entscheidungen der Stadtgeschichte – heute wird der Schlossankauf als weitblickende kulturpolitische Weichenstellung gewürdigt.",
-        body:"Der Ankauf des Schlossareals 1975/76 löst heftige Debatten aus. Kritiker halten die Investition für unverantwortlich, Befürworter sehen darin eine historische Chance zur Schaffung eines kulturellen und sozialen Zentrums. Die SPD setzt sich für den Kauf ein und behält Recht: Das Schloss entwickelt sich zum Herzstück des kulturellen und jugendpolitischen Lebens in Langenselbold. Engagierte Jugendliche – darunter viele Mitglieder der Jungsozialisten (Jusos) – packen mit an und bauen gemeinsam mit der Gemeinde ein lebendiges Jugendzentrum auf, das Generationen prägt. Parallel dazu investiert die Stadt in den 1970er Jahren systematisch in Spiel- und Bolzplätze im gesamten Stadtgebiet. Diese Infrastruktur für Kinder und Jugendliche zeigt das sozialdemokratische Verständnis von Daseinsvorsorge: Nicht nur Straßen und Kanäle, sondern auch Orte der Begegnung, des Spiels und der Kultur gehören zur lebenswerten Stadt.",
-        tags:["Schloss","Jugendzentrum","Jusos","Spielplätze"],
-        source:["Chronik, 1975/1976/1970er"]
+        id:"e1933-verbot",year:1933,date:"1933",
+        title:"NS-Regime verbietet SPD-Ortsverein",type:"Ereignis",
+        excerpt:"Die Nationalsozialisten lösen den SPD-Ortsverein auf. Jean Mahr wird zu 15 Monaten Gefängnis verurteilt. Repression und Verfolgung prägen die folgenden zwölf Jahre.",
+        body:"1933 verbieten die Nationalsozialisten den SPD-Ortsverein Langenselbold. Jean Mahr, eine Schlüsselfigur der lokalen Sozialdemokratie, wird zu 15 Monaten Gefängnis verurteilt – ein typisches Schicksal für aktive Sozialdemokraten. Viele Genossen ziehen sich zurück oder werden verhaftet. Die Gemeinde erwirbt den 'Fruchtbau', ehemals Ort gewerkschaftlicher und sozialdemokratischer Aktivität. Bis 1945 sind Repression, Überwachung und die Zerschlagung demokratischer Strukturen Alltag. Auch die jüdische Bevölkerung wird verfolgt und ermordet.",
+        tags:["NS-Zeit","Repression","Fruchtbau","Jean Mahr","Verfolgung"],
+        source:["Chronik SPD Langenselbold, 1933"],
+        milestone:false
       },
       {
-        id:"e1970-kinzigsee",
-        year:1977,
-        date:"1970er",
-        title:"Kinzigsee & Freizeitareal",
-        type:"Projekt",
-        excerpt:"Gegen Widerstand durchgesetzt; schafft Freizeitwert und Jobs.",
-        body:"Aushubmaterial erweitert das Industriegelände – neue Arbeitsplätze entstehen.",
-        tags:["Kinzigsee","Freizeit","Wirtschaft"],
-        source:["Chronik, 1970er"]
+        id:"ctx-1945",year:1945,date:"8. Mai 1945",
+        title:"Kriegsende und Befreiung",type:"Kontext",
+        excerpt:"Deutschland kapituliert bedingungslos – Ende des Zweiten Weltkriegs, Befreiung vom Nationalsozialismus.",
+        body:"Mit der bedingungslosen Kapitulation endet der Zweite Weltkrieg in Europa. Deutschland liegt in Trümmern, Millionen sind tot. Die Alliierten beginnen mit dem Wiederaufbau der Demokratie. Überlebende Sozialdemokraten übernehmen Verantwortung in den neuen demokratischen Strukturen.",
+        tags:["Deutschland","Befreiung","Kontext"],
+        source:["Wikipedia: Ende des Zweiten Weltkriegs"],
+        milestone:true
       },
       {
-        id:"e1979-buecherei",
-        year:1979,
-        date:"1979",
-        title:"Schlossbücherei",
-        type:"Projekt",
-        excerpt:"Offener Wissensort im historischen Ambiente.",
-        body:"Kulturveranstaltungen (Serenaden, Festivals, Lesungen) prägen die 1980er.",
-        tags:["Kultur","Bücherei","Schloss"],
-        source:["Chronik, 1979/1980er"]
+        id:"e1945-mahr",year:1945,date:"25.04.1945",
+        title:"Jean Mahr wird kommissarischer Bürgermeister",type:"Person",
+        excerpt:"Jean Mahr, Pflasterer, Gewerkschafter, verfolgter Sozialdemokrat – am Tag nach der Befreiung zum kommissarischen Bürgermeister ernannt.",
+        body:"Am 25. April 1945, unmittelbar nach dem Einmarsch der US-Truppen, ernennen die Amerikaner Jean Mahr zum kommissarischen Bürgermeister. Mahr hatte unter den Nazis 15 Monate Gefängnis verbüßt und steht für demokratische Integrität. Der gelernte Pflasterer und Gewerkschafter baut Brücken zwischen politischen Lagern und führt Langenselbold in die Nachkriegsordnung. Bei der ersten Kommunalwahl am 27.01.1946 gewinnt die SPD 6 von 18 Mandaten – Mahr wird bestätigt.",
+        tags:["Jean Mahr","Neubeginn","Person"],
+        source:["Chronik SPD Langenselbold, 1945/1946"],
+        milestone:true
       },
       {
-        id:"e1983-stadt",
-        year:1983,
-        date:"1983",
-        title:"Langenselbold wird Stadt",
-        type:"Ereignis",
-        excerpt:"Im Rahmen der 875-Jahr-Feier zur Stadt erhoben; Klosterberghalle entsteht.",
-        body:"Ein Meilenstein mit dauerhaftem Effekt für Selbstverständnis und Infrastruktur.",
-        tags:["Stadtwerdung","Klosterberghalle"],
-        source:["Chronik, 1983"]
+        id:"e1946-wohnen",year:1948,date:"späte 1940er",
+        title:"45 gemeindeeigene Wohnungen gebaut",type:"Projekt",
+        excerpt:"Trotz leerer Kassen investiert die Gemeinde in 45 Sozialwohnungen – Antwort auf katastrophale Wohnungsnot nach Krieg und Vertreibung.",
+        body:"Flüchtlinge, Vertriebene, Rückkehrer – die Wohnungsnot ist katastrophal. Die von der SPD mitgeprägte Gemeindeverwaltung entscheidet mutig: Trotz knappster Kassen werden 45 gemeindeeigene Wohnungen gebaut. Kommunaler Wohnungsbau wird zum Markenzeichen sozialdemokratischer Politik in Langenselbold: menschenwürdiges Wohnen, soziale Stabilität, Gemeinschaft.",
+        tags:["Wohnen","Sozialpolitik","Nachkriegszeit"],
+        source:["Chronik SPD Langenselbold, 1946ff."],
+        milestone:false
       },
       {
-        id:"e1985-mehrheit",
-        year:1985,
-        date:"1985",
-        title:"Absolute Mehrheit für die SPD",
-        type:"Ereignis",
-        excerpt:"Bei den Kommunalwahlen erreicht die SPD die absolute Mehrheit – Höhepunkt jahrzehntelanger politischer Arbeit und zugleich Auftrag zur konstruktiven Debatte.",
-        body:"1985 erringt die SPD bei den Kommunalwahlen die absolute Mehrheit in der Stadtverordnetenversammlung – ein historischer Erfolg und Vertrauensbeweis der Bürgerschaft. Doch mit der Dominanz wächst auch die Verantwortung: Innerhalb der Partei werden kontroverse Themen wie Friedenspolitik, Umweltschutz und Stadtentwicklung intensiv diskutiert. Die SPD nutzt ihre starke Position, um die Sozial-, Kultur- und Umweltpolitik der Stadt nachhaltig zu prägen. Projekte im Bereich Jugendarbeit, Infrastruktur und sozialer Wohnungsbau werden vorangetrieben. Gleichzeitig wird Wert auf eine lebendige Debattenkultur gelegt – auch innerparteilich gibt es unterschiedliche Positionen, etwa zur Nachrüstungsdebatte oder zu ökologischen Fragen. Diese Phase zeigt, dass politische Mehrheit nicht Meinungsmonopol bedeutet, sondern Gestaltungskraft und Verantwortung.",
-        tags:["Kommunalwahl","Mehrheit"],
-        source:["Chronik, 1985"]
+        id:"e1951-kanal",year:1951,date:"1951–1960er",
+        title:"Kanalisierung beginnt",type:"Projekt",
+        excerpt:"Langfristiges Infrastrukturprojekt: Kanalisierung und moderne Abwasserentsorgung – Schlüssel zur Stadtentwicklung.",
+        body:"Ab 1951 beginnt die schrittweise Kanalisierung Langenselbolds, ein Projekt, das bis in die 1960er Jahre läuft. Parallel entstehen neue Brücken, darunter 1952 die Gründaubrücke am Marktplatz. Moderne Infrastruktur ist Voraussetzung für Wachstum und Lebensqualität.",
+        tags:["Infrastruktur","Umwelt","Kanalisierung"],
+        source:["Chronik SPD Langenselbold, 1951/1952"],
+        milestone:false
       },
       {
-        id:"e1990-100",
-        year:1990,
-        date:"1990",
-        title:"100 Jahre SPD Langenselbold",
-        type:"Ereignis",
-        excerpt:"206 Mitglieder feiern ein Jahrhundert sozialdemokratisches Engagement in Langenselbold – von der verfolgten Arbeiterpartei zur kommunalpolitischen Gestaltungskraft.",
-        body:"1990 feiert die SPD Langenselbold ihr 100-jähriges Bestehen. 206 Mitglieder blicken auf ein bewegtes Jahrhundert zurück: Von den mutigen Gründungsjahren im Kaiserreich, über die Verfolgung in der NS-Zeit, den demokratischen Neubeginn nach 1945 bis hin zu den großen kommunalpolitischen Projekten der Nachkriegsjahrzehnte. Das Jubiläum ist mehr als ein Festakt – es ist ein Moment der Erinnerung und Selbstvergewisserung. Zeitzeugnisse werden gesammelt, Chroniken erstellt, Gespräche mit älteren Genossen geführt. Dieses kollektive Gedächtnis bewahrt nicht nur Namen und Daten, sondern auch die Werte, für die Generationen von Sozialdemokraten eingetreten sind: Solidarität, Gerechtigkeit, demokratische Teilhabe und soziale Verantwortung. Die Geschichte der SPD ist untrennbar mit der Entwicklung Langenselbolds zur modernen, sozialen Stadt verbunden.",
-        tags:["Jubiläum","Mitglieder"],
-        source:["Chronik, 1990"]
+        id:"e1960-feier",year:1960,date:"1960",
+        title:"70-Jahr-Feier mit Waldemar von Knoeringen",type:"Ereignis",
+        excerpt:"SPD Langenselbold feiert 70 Jahre – Festredner ist Waldemar von Knoeringen, SPD-Vorsitzender in Bayern und Widerstandskämpfer.",
+        body:"1960 begeht die SPD Langenselbold ihr 70-jähriges Bestehen. Hauptredner ist Waldemar von Knoeringen, bayerischer SPD-Chef und ehemaliger Widerstandskämpfer gegen die NS-Diktatur. Die Feier unterstreicht die Verwurzelung der Partei in der lokalen Gemeinschaft und ihre bundesweite Vernetzung.",
+        tags:["Jubiläum","Knoeringen","Feier"],
+        source:["Chronik SPD Langenselbold, 1960; Festschrift 70 Jahre"],
+        milestone:false
+      },
+      {
+        id:"e1960-wahl",year:1960,date:"1960",
+        title:"Kommunalwahl: SPD erreicht 68 %",type:"Ereignis",
+        excerpt:"Bei der Kommunalwahl 1960 erzielt die SPD Langenselbold einen überragenden Wahlerfolg mit 68 Prozent.",
+        body:"Die Kommunalwahl 1960 bringt der SPD ein Traumergebnis: 68 % der Stimmen. Dieses Vertrauen der Bürgerschaft ist Anerkennung für die Aufbauleistung der Nachkriegsjahre und Auftrag für weitere sozialpolitische Projekte.",
+        tags:["Kommunalwahl","Wahlen","Erfolg"],
+        source:["Chronik SPD Langenselbold, 1960"],
+        milestone:false
+      },
+      {
+        id:"e1961-niedertal",year:1961,date:"1961–1963",
+        title:"52 Reihenhäuser Niedertalstraße",type:"Projekt",
+        excerpt:"50 Familien verlassen Baracken und ziehen in neue Reihenhäuser – sozialer Wohnungsbau schafft menschenwürdige Verhältnisse.",
+        body:"1961 bis 1963 entstehen 52 Wohnungen in Reihenhäusern an der Niedertalstraße. 50 Familien können endlich Baracken verlassen. Parallel entstehen 8 weitere gemeindeeigene Wohnungen in der Kinzigstraße. Sozialer Wohnungsbau bleibt Schwerpunkt der SPD-Politik.",
+        tags:["Wohnen","Niedertalstraße","Kinzigstraße","Sozialpolitik"],
+        source:["Chronik SPD Langenselbold, 1961–1963"],
+        milestone:false
+      },
+      {
+        id:"e1962-freibad",year:1962,date:"1962",
+        title:"Freibad eröffnet",type:"Projekt",
+        excerpt:"Bau des Freibads – Freizeit, Gesundheit, Lebensqualität für alle Generationen.",
+        body:"1962 eröffnet das Freibad Langenselbold. Es wird zu einem identitätsstiftenden Ort, der Generationen verbindet. Sport, Spiel, Erholung – ein Stück Sommer für alle.",
+        tags:["Freizeit","Freibad","Infrastruktur"],
+        source:["Chronik SPD Langenselbold, 1962"],
+        milestone:false
+      },
+      {
+        id:"e1964-schule",year:1964,date:"1964",
+        title:"Weinbergschule und erste Kläranlage",type:"Projekt",
+        excerpt:"Doppelschlag für Zukunftsfähigkeit: Weinbergschule mit Turnhalle und erste eigene Kläranlage gehen in Betrieb.",
+        body:"1964 ist ein Jahr wichtiger Infrastrukturprojekte: Die Weinbergschule samt Turnhalle wird eröffnet, die erste eigene Kläranlage geht in Betrieb. Bildung und Umwelttechnik – beides Grundlagen moderner Stadtentwicklung.",
+        tags:["Bildung","Umwelt","Weinbergschule","Kläranlage"],
+        source:["Chronik SPD Langenselbold, 1964"],
+        milestone:false
+      },
+      {
+        id:"e1969-kita",year:1969,date:"1969",
+        title:"Kita Buchbergblick eröffnet",type:"Projekt",
+        excerpt:"Frühe Bildung und Vereinbarkeit von Familie und Beruf rücken in den Fokus – Kita Buchbergblick eröffnet.",
+        body:"1969 nimmt die Kita Buchbergblick den Betrieb auf. Frühe Bildung und Betreuung werden ausgebaut. 1973 folgt die Kita und der Hort 'Zum Rödelberg' mit erweiterten Betreuungszeiten – ein wichtiger Schritt zur Vereinbarkeit von Familie und Beruf.",
+        tags:["Kinderbetreuung","Kita","Hort","Bildung"],
+        source:["Chronik SPD Langenselbold, 1969/1973"],
+        milestone:false
+      },
+      {
+        id:"e1970-kinzigsee",year:1977,date:"1970er",
+        title:"Kinzigsee und Freizeitareal",type:"Projekt",
+        excerpt:"Umkämpftes Leuchtturmprojekt: Kinzigsee schafft Freizeitwert, Tourismus und Arbeitsplätze – Aushub erweitert Industriegebiet.",
+        body:"In den 1970er Jahren entsteht der Kinzigsee – ein umstrittenes, aber weitsichtiges Projekt. Kritiker fürchten Kosten und ökologische Risiken, Befürworter sehen Chancen für Freizeit, Tourismus und Wirtschaft. Das Aushubmaterial wird genutzt, um das Industriegelände zu erweitern – neue Arbeitsplätze entstehen. Der Kinzigsee wird zum Naherholungsgebiet und wirtschaftlichen Impulsgeber.",
+        tags:["Kinzigsee","Freizeit","Wirtschaft","Tourismus"],
+        source:["Chronik SPD Langenselbold, 1970er"],
+        milestone:false
+      },
+      {
+        id:"e1975-schloss",year:1975,date:"1975/1976",
+        title:"Schlossareal wird angekauft",type:"Projekt",
+        excerpt:"Eine der umstrittensten Entscheidungen der Stadtgeschichte: SPD setzt Schlossankauf durch – heute kulturelles Herzstück der Stadt.",
+        body:"1975/76 kauft die Stadt das Schlossareal – eine heftig umstrittene Entscheidung. Kritiker halten die Investition für Verschwendung, die SPD sieht darin eine historische Chance. Sie behält Recht: Das Schloss wird zum kulturellen und jugendpolitischen Zentrum. Engagierte Jugendliche, darunter viele Jusos (Jungsozialisten), bauen gemeinsam mit der Stadt ein lebendiges Jugendzentrum auf. Parallel entstehen überall Spiel- und Bolzplätze. Sozialdemokratische Daseinsvorsorge bedeutet: Nicht nur Straßen, sondern auch Orte der Begegnung, des Spiels und der Kultur.",
+        tags:["Schloss","Jugendzentrum","Jusos","Spielplätze","Kultur"],
+        source:["Chronik SPD Langenselbold, 1975/1976/1970er"],
+        milestone:false
+      },
+      {
+        id:"e1979-buecherei",year:1979,date:"1979",
+        title:"Schlossbücherei öffnet",type:"Projekt",
+        excerpt:"Wissensort im historischen Ambiente: Schlossbücherei eröffnet, Kulturveranstaltungen prägen die 1980er.",
+        body:"1979 öffnet die Schlossbücherei im historischen Gemäuer. Sie wird zum offenen Wissensort für alle. Kulturveranstaltungen – Serenaden, Festivals, Lesungen – prägen fortan das kulturelle Leben der Stadt.",
+        tags:["Kultur","Bücherei","Schloss","Bildung"],
+        source:["Chronik SPD Langenselbold, 1979/1980er"],
+        milestone:false
+      },
+      {
+        id:"e1983-stadt",year:1983,date:"1983",
+        title:"Langenselbold wird Stadt",type:"Ereignis",
+        excerpt:"Im Rahmen der 875-Jahr-Feier zur Stadt erhoben – Klosterberghalle entsteht, Selbstverständnis wandelt sich.",
+        body:"1983 wird Langenselbold im Rahmen der 875-Jahr-Feier zur Stadt erhoben. Dieser Status stärkt das Selbstbewusstsein und die politische Position. Die Klosterberghalle entsteht als neues Veranstaltungszentrum. Ein Meilenstein mit Langzeitwirkung.",
+        tags:["Stadtwerdung","Klosterberghalle","Infrastruktur"],
+        source:["Chronik SPD Langenselbold, 1983"],
+        milestone:true
+      },
+      {
+        id:"e1985-mehrheit",year:1985,date:"1985",
+        title:"SPD erreicht absolute Mehrheit",type:"Ereignis",
+        excerpt:"Kommunalwahl 1985: SPD erringt absolute Mehrheit – Höhepunkt und Verantwortung.",
+        body:"1985 erzielt die SPD die absolute Mehrheit in der Stadtverordnetenversammlung. Das ist Vertrauensbeweis und Auftrag zugleich. Die Partei nutzt ihre Stärke, um Sozial-, Kultur- und Umweltpolitik zu gestalten. Intern werden kontroverse Themen wie Friedenspolitik (Nachrüstungsdebatte), Ökologie und Stadtentwicklung diskutiert. Politische Mehrheit bedeutet nicht Meinungsmonopol, sondern Gestaltungskraft und lebendige Debattenkultur.",
+        tags:["Kommunalwahl","Mehrheit","Wahlen"],
+        source:["Chronik SPD Langenselbold, 1985"],
+        milestone:false
+      },
+      {
+        id:"ctx-1990",year:1990,date:"3. Oktober 1990",
+        title:"Deutsche Wiedervereinigung",type:"Kontext",
+        excerpt:"DDR und BRD vereinigen sich – Deutschland wird wiedervereinigt.",
+        body:"Nach dem Fall der Mauer 1989 tritt die DDR der Bundesrepublik bei. Deutschland ist wiedervereinigt. Die SPD spielt eine zentrale Rolle in diesem historischen Prozess.",
+        tags:["Deutschland","Wiedervereinigung","Kontext"],
+        source:["Wikipedia: Deutsche Wiedervereinigung"],
+        milestone:true
+      },
+      {
+        id:"e1990-100",year:1990,date:"1990",
+        title:"100 Jahre SPD Langenselbold",type:"Ereignis",
+        excerpt:"206 Mitglieder feiern 100 Jahre SPD Langenselbold – von der verfolgten Arbeiterpartei zur kommunalpolitischen Gestaltungskraft.",
+        body:"1990 feiert die SPD Langenselbold ihr 100-jähriges Bestehen. 206 Mitglieder blicken zurück auf ein bewegtes Jahrhundert: Gründungsjahre im Kaiserreich, Repression im NS-Regime, demokratischer Neubeginn 1945, große Infrastrukturprojekte. Das Jubiläum ist Moment der Erinnerung und Selbstvergewisserung. Zeitzeugnisse werden gesammelt, Chroniken erstellt. Das kollektive Gedächtnis bewahrt Werte: Solidarität, Gerechtigkeit, demokratische Teilhabe, soziale Verantwortung.",
+        tags:["Jubiläum","Mitglieder","Feier"],
+        source:["Chronik SPD Langenselbold, 1990; Festschrift 100 Jahre"],
+        milestone:true
+      },
+      {
+        id:"e1990-umwelt",year:1990,date:"1989/1990",
+        title:"Neue Kläranlage und Regenrückhaltebecken",type:"Projekt",
+        excerpt:"Umwelttechnik wird modernisiert: Neue Kläranlage und Regenrückhaltebecken verbessern Gewässerschutz.",
+        body:"Ende der 1980er, Anfang der 1990er Jahre investiert Langenselbold in moderne Umwelttechnik. Eine neue Kläranlage und Regenrückhaltebecken verbessern den Gewässerschutz nachhaltig. Umweltschutz wird zum festen Bestandteil kommunaler Politik.",
+        tags:["Umwelt","Kläranlage","Infrastruktur"],
+        source:["Chronik SPD Langenselbold, 1989/1990"],
+        milestone:false
       }
     ];
 
-    // --- Filter: Types und Tags aus Daten ableiten ---
     const TYPES = [...new Set(EVENTS.map(e => e.type))];
-    const ALL_TAGS = [...new Set(EVENTS.flatMap(e => e.tags))].sort((a,b)=>a.localeCompare(b,'de'));
+    const ALL_TAGS = [...new Set(EVENTS.flatMap(e => e.tags||[]))].sort((a,b)=>a.localeCompare(b,'de'));
 
     const state = {
-      activeTypes: new Set(TYPES),  // initial: alle an
-      activeTags: new Set(),        // optional
+      activeTypes: new Set(TYPES),
+      activeTags: new Set(),
       query: ""
     };
 
@@ -396,7 +521,6 @@
     const clearEl = document.getElementById("clear");
 
     function chip(label, group, active=true){
-      const id = `${group}:${label}`;
       const wrapper = document.createElement("label");
       wrapper.className = "chip" + (active ? " active":"");
       wrapper.title = group==="type" ? "Typfilter" : "Tagfilter";
@@ -404,7 +528,7 @@
       const input = document.createElement("input");
       input.type = "checkbox";
       input.checked = active;
-      input.ariaLabel = label;
+      input.setAttribute("aria-label", label);
       input.dataset.group = group;
       input.dataset.value = label;
 
@@ -414,9 +538,11 @@
       input.addEventListener("change",(ev)=>{
         const val = ev.target.dataset.value;
         if(ev.target.dataset.group==="type"){
-          if(ev.target.checked) state.activeTypes.add(val); else state.activeTypes.delete(val);
+          if(ev.target.checked) state.activeTypes.add(val);
+          else state.activeTypes.delete(val);
         }else{
-          if(ev.target.checked) state.activeTags.add(val); else state.activeTags.delete(val);
+          if(ev.target.checked) state.activeTags.add(val);
+          else state.activeTags.delete(val);
         }
         wrapper.classList.toggle("active", ev.target.checked);
         render();
@@ -428,25 +554,21 @@
     }
 
     function buildFilters(){
-      // Typ-Filter Sektion
       const typeSection = document.createElement("div");
       typeSection.className = "filter-section";
       TYPES.forEach(t => typeSection.appendChild(chip(t,"type",true)));
       filtersEl.appendChild(typeSection);
 
-      // Tag-Toggle Button
       const tagToggle = document.createElement("button");
       tagToggle.className = "tag-toggle";
       tagToggle.textContent = "Themen-Tags";
       tagToggle.setAttribute("aria-expanded", "false");
 
-      // Tag-Filter Container (standardmäßig versteckt)
       const tagContainer = document.createElement("div");
       tagContainer.className = "tag-filters";
       tagContainer.id = "tag-filters";
       ALL_TAGS.forEach(t => tagContainer.appendChild(chip(t,"tag",false)));
 
-      // Toggle-Funktionalität
       tagToggle.addEventListener("click", () => {
         const isExpanded = tagContainer.classList.toggle("visible");
         tagToggle.classList.toggle("expanded", isExpanded);
@@ -463,14 +585,13 @@
         if(!m.has(e.year)) m.set(e.year, []);
         m.get(e.year).push(e);
       });
-      return [...m.entries()].sort((a,b)=>a[0]-b[0]); // aufwärts
+      return [...m.entries()].sort((a,b)=>a[0]-b[0]);
     }
 
     function matches(e){
       if(!state.activeTypes.has(e.type)) return false;
       if(state.activeTags.size){
-        // mindestens einen Tag treffen
-        const has = e.tags.some(t => state.activeTags.has(t));
+        const has = (e.tags||[]).some(t => state.activeTags.has(t));
         if(!has) return false;
       }
       if(state.query){
@@ -486,51 +607,91 @@
       const items = EVENTS.filter(matches);
       const groups = groupByYear(items);
 
+      if(groups.length === 0){
+        const msg = document.createElement("p");
+        msg.textContent = "Keine Ereignisse gefunden. Bitte passen Sie die Filter an.";
+        msg.style.cssText = "color:var(--muted);text-align:center;padding:40px 20px";
+        timelineEl.appendChild(msg);
+        return;
+      }
+
       groups.forEach(([year, arr])=>{
         const yb = document.createElement("div");
         yb.className = "year-block";
+        yb.dataset.year = year;
+
         const yl = document.createElement("h2");
         yl.className = "year-label";
         yl.textContent = year;
+        yl.id = `year-${year}`;
         yb.appendChild(yl);
 
         arr.forEach(e=>{
-          const wrap = document.createElement("div");
+          const wrap = document.createElement("article");
           wrap.className = "item";
+          wrap.setAttribute("aria-labelledby", `event-${e.id}`);
+
           const dot = document.createElement("div");
-          dot.className = "node";
+          dot.className = e.milestone ? "node milestone" : "node";
           wrap.appendChild(dot);
 
           const card = document.createElement("details");
           card.className = "card";
+
           const sum = document.createElement("summary");
+          sum.setAttribute("aria-label", `${e.type}: ${e.title}`);
 
           const kind = document.createElement("span");
-          kind.className = "tag";
+          kind.className = "type-badge";
           kind.textContent = e.type;
+
+          const eventContent = document.createElement("div");
+          eventContent.className = "event-content";
 
           const title = document.createElement("h3");
           title.className = "title";
+          title.id = `event-${e.id}`;
           title.textContent = e.title;
 
           const subt = document.createElement("p");
           subt.className = "subtitle";
           subt.textContent = e.excerpt;
 
+          eventContent.appendChild(title);
+          eventContent.appendChild(subt);
           sum.appendChild(kind);
-          sum.appendChild(title);
-          sum.appendChild(subt);
+          sum.appendChild(eventContent);
 
           const body = document.createElement("div");
           body.className = "content";
-          body.innerHTML = `
-            <p>${e.body}</p>
-            <div class="meta">
-              <span class="pill">Datum: ${e.date||e.year}</span>
-              ${e.tags?.length ? `<span class="pill">Tags: ${e.tags.join(", ")}</span>`:""}
-              ${e.source?.length ? `<span class="pill">Quelle: ${e.source.join("; ")}</span>`:""}
-            </div>
-          `;
+
+          const bodyText = document.createElement("p");
+          bodyText.textContent = e.body;
+          body.appendChild(bodyText);
+
+          const meta = document.createElement("div");
+          meta.className = "meta";
+
+          const datePill = document.createElement("span");
+          datePill.className = "pill";
+          datePill.textContent = `📅 ${e.date||e.year}`;
+          meta.appendChild(datePill);
+
+          if(e.tags && e.tags.length){
+            const tagPill = document.createElement("span");
+            tagPill.className = "pill";
+            tagPill.textContent = `🏷️ ${e.tags.join(", ")}`;
+            meta.appendChild(tagPill);
+          }
+
+          if(e.source && e.source.length){
+            const sourcePill = document.createElement("span");
+            sourcePill.className = "pill";
+            sourcePill.textContent = `📚 ${e.source.join("; ")}`;
+            meta.appendChild(sourcePill);
+          }
+
+          body.appendChild(meta);
 
           card.appendChild(sum);
           card.appendChild(body);
@@ -542,13 +703,17 @@
       });
     }
 
-    // Suche
     qEl.addEventListener("input", (e)=>{ state.query = e.target.value.trim(); render(); });
     clearEl.addEventListener("click", ()=>{ qEl.value=""; state.query=""; render(); });
 
-    // Init
     buildFilters();
     render();
+
+    // Deep-linking: Wenn URL Hash enthält, scrolle dorthin
+    if(window.location.hash){
+      const target = document.querySelector(window.location.hash);
+      if(target) setTimeout(()=>target.scrollIntoView({behavior:'smooth', block:'start'}), 300);
+    }
   </script>
 </body>
 </html>
